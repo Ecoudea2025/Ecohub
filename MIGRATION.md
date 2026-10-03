@@ -1,49 +1,67 @@
 # Estrategia de Migración a Android (MIGRATION.md)
 
-Este documento describe el análisis de los módulos actuales de Ecohub (una aplicación web basada en HTML, JS, CSS, PHP) y las posibles rutas tecnológicas para transformarla en una aplicación Android nativa ("daily driver").
+Este documento describe el análisis de los módulos actuales de Ecohub (aplicación web legada) y el plan definitivo para transformarla en una aplicación Android nativa ("daily driver").
 
 ## 1. Auditoría de Módulos Actuales
 
-| Módulo Web Actual | Clasificación Inicial | Acción Requerida / Destino | Confirmación del Usuario |
-|---|---|---|---|
-| Inicio (`sec-inicio`) | ⚠️ Reenfocar | Adaptar a Dashboard cotidiano (hábitos, notas, tareas del día) | No |
-| Lector PDF (`sec-pdf`) | ✅ Sirve | Mejorar UX (scroll fluido, pinch to zoom) | No |
-| UdeA (`sec-udea`) | ❌ Eliminar / ⚠️ Reenfocar | Posiblemente eliminar del main si no aporta al "daily driver". | **Sí** |
-| Calculadora (`herramientas/calculadora`) | ⚠️ Reenfocar | Convertir en calculadora de uso diario / gastos. | No |
-| Graficadora (`herramientas/graficadora`) | ❌ Eliminar | Eliminar (Fase 3). | No |
-| Conceptos Económicos (`herramientas/conceptos`) | ❌ Eliminar | Eliminar (Fase 3). | No |
-| Modelos de Crecimiento (`herramientas/modelos`) | ❌ Eliminar | Eliminar (Fase 3). | No |
-| Promedios (`herramientas/promedios`) | ✅ Sirve | Mejorar UI mobile, teclado numérico. | No |
-| Juegos / Árboles (`herramientas/juegos`) | ❌ Eliminar | Eliminar (Fase 3). | No |
-| Agenda (`sec-agenda`) | ✅ Sirve | Vista de lista móvil, notificaciones locales. | No |
-| Música (`sec-musica`) | ✅ Sirve | Controles táctiles grandes, notificaciones media. | No |
-| Enlaces (`sec-enlaces`) | ⚠️ Reenfocar | Renombrar a "Mis links frecuentes", rediseñar. | No |
-| Tablero (`sec-tablero`) | ✅ Sirve | Responsive, apilable, sin desbordes. | No |
-| Laboratorios (`sec-laboratorios`) | ❌ Eliminar | Eliminar del menú principal. | No |
-| `math-teacher-library.excalidrawlib` | ⚠️ Reenfocar / ❌ Eliminar | Recursos de pizarra. Eliminar si no es útil para uso diario. | **Sí** |
-| `mathematical-symbols.excalidrawlib` | ⚠️ Reenfocar / ❌ Eliminar | Recursos de pizarra. Eliminar si no es útil para uso diario. | **Sí** |
-| `_basicapi.pdf` | ❌ Eliminar | Documento irrelevante para daily driver. | **Sí** |
+| Módulo Web Actual | Clasificación Inicial | Esfuerzo Estimado | Acción Requerida / Destino | Confirmación del Usuario |
+|---|---|---|---|---|
+| Inicio (`sec-inicio`) | ⚠️ Reenfocar | **L** | Adaptar a Dashboard cotidiano (hábitos, notas, tareas del día). | Sí |
+| Lector PDF (`sec-pdf`) | ✅ Sirve | **M** | Mejorar UX (scroll fluido, pinch to zoom). | Sí |
+| UdeA (`sec-udea`) | ⚠️ Reenfocar | **L** | Renombrar a "Universidad/Académico". Mantener horarios, fechas, links. Eliminar específico de economía. | Sí - Aprobado reenfoque |
+| Calculadora (`herramientas/calculadora`) | ⚠️ Reenfocar | **S** | Convertir en calculadora de uso diario / gastos. | Sí |
+| Graficadora (`herramientas/graficadora`) | ❌ Eliminar | - | Archivar en `/legacy/` (Fase 3). | Sí |
+| Conceptos Económicos (`herramientas/conceptos`) | ❌ Eliminar | - | Archivar en `/legacy/` (Fase 3). | Sí |
+| Modelos de Crecimiento (`herramientas/modelos`) | ❌ Eliminar | - | Archivar en `/legacy/` (Fase 3). | Sí |
+| Promedios (`herramientas/promedios`) | ✅ Sirve | **S** | Mejorar UI mobile, teclado numérico. | Sí |
+| Juegos / Árboles (`herramientas/juegos`) | ❌ Eliminar | - | Archivar en `/legacy/` (Fase 3). | Sí |
+| Agenda (`sec-agenda`) | ✅ Sirve | **S** | Vista de lista móvil, notificaciones locales. | Sí |
+| Música (`sec-musica`) | ✅ Sirve | **M** | Controles táctiles grandes, notificaciones media. | Sí |
+| Enlaces (`sec-enlaces`) | ⚠️ Reenfocar | **M** | Renombrar a "Mis links frecuentes", rediseñar. | Sí |
+| Tablero (`sec-tablero`) | ✅ Sirve | **M** | Responsive, apilable, sin desbordes. | Sí |
+| Laboratorios (`sec-laboratorios`) | ❌ Eliminar | - | Archivar en `/legacy/` (Fase 3). | Sí |
+| `math-teacher-library.excalidrawlib` | ❌ Eliminar | - | Archivar en `/legacy/` en la Fase 3. | Sí - Confirmado |
+| `mathematical-symbols.excalidrawlib`| ❌ Eliminar | - | Archivar en `/legacy/` en la Fase 3. | Sí - Confirmado |
+| `_basicapi.pdf` | ❌ Eliminar | - | Archivar en `/legacy/` en la Fase 3. | Sí - Confirmado |
 
 
-## 2. Opciones de Migración Tecnológica
+## 2. Decisión Tecnológica Definitiva
 
-Para lograr la meta de una aplicación Android estable y usable en celular ("daily driver"), tenemos tres rutas principales de migración:
+Tras evaluar las rutas disponibles, la decisión oficial de arquitectura es **Ruta A (Kotlin + Jetpack Compose nativo)**.
 
-| Ruta | Pros | Contras | Esfuerzo | Riesgo | Veredicto |
-|---|---|---|---|---|---|
-| **A. Rewrite nativo Kotlin + Compose** | Mejor UX, rendimiento, Material 3 real, control total. | Reescribir todo (lógica y UI), requiere más tiempo de desarrollo. | Alto | Medio | Destino final recomendado. |
-| **B. PWA (manifest + service worker)** | Rápido, sin necesidad de Play Store, reusa el código web actual. | Limitaciones de OS Android (notificaciones, widgets, iconos dinámicos). | Bajo | Bajo | Puente temporal. |
-| **C. WebView wrapper (Capacitor/Cordova)** | Desarrollo rápido, reutiliza la base de código, acceso limitado a APIs nativas. | UX "no nativa", problemas de rendimiento, sensación de "sitio web empaquetado". | Medio | Medio | Puente aceptable (solo con aprobación). |
+- **Ruta A (Kotlin + Compose nativo)**: **APROBADA como destino único**. Todo el desarrollo se enfocará en esta pila tecnológica.
+- **Ruta B (PWA)**: **DESCARTADA**. Construir un puente PWA implica doble esfuerzo de mantenimiento de UI que no aporta al objetivo final.
+- **Ruta C (WebView wrapper)**: **VETADA permanentemente**. Va en contra del principio de "app estable sin solapamientos" y diseño nativo.
 
-### Recomendación Estratégica
-- **Corto Plazo**: Si el objetivo es tener una validación rápida en un dispositivo móvil con el código existente, se sugiere la ruta **B (PWA)**, mientras se diseñan las nuevas vistas nativas.
-- **Largo Plazo**: La visión definitiva del proyecto exige que sea 100% nativa. Por ende, la ruta **A (Rewrite en Compose)** es el destino final inevitable. Iremos reemplazando módulo a módulo creando el proyecto Android e implementando cada vista nativa.
-
-*Nota: La opción C (WebViewWrapper) contradice el espíritu "estable sin solapamientos" y no se implementará salvo aprobación explícita.*
+*Nota Estratégica*: En la Fase 1 se creará un proyecto Android vacío en el repositorio, coexistiendo con la app web actual. Se migrará módulo por módulo. Una vez migrado el último módulo útil, la app web se moverá a una carpeta `/legacy/` para su archivo definitivo (no se borrará el código de inmediato).
 
 
-## 3. Preguntas abiertas para el usuario (Pendientes de Aprobación)
+## 3. Estructura Objetivo del Repositorio
 
-1. **Ruta de migración**: ¿Apruebas que iniciemos creando una estructura nativa base en Kotlin + Compose (Ruta A) para migrar los módulos gradualmente, o prefieres envolver la app temporalmente en una PWA (Ruta B)?
-2. **Archivos académicos (`*.excalidrawlib`, `_basicapi.pdf`)**: ¿Confirmas la eliminación de estos archivos en la Fase 3, o los reenfocamos de alguna manera útil para el "daily driver"?
-3. **Módulo UdeA (`sec-udea`)**: Este módulo es altamente específico. ¿Se retira por completo de la app de uso diario, o se reconfigura de alguna forma?
+Para soportar la convivencia inicial y posterior archivado, el repositorio adoptará la siguiente estructura:
+
+```text
+/
+├── AGENTS.md
+├── MIGRATION.md
+├── ROADMAP.md
+├── README.md
+├── legacy/           # app web actual (solo lectura, se moverá aquí al final de la transición)
+│   └── web/
+├── android/          # Proyecto Android nativo (Compose)
+│   ├── app/
+│   │   └── src/main/java/...
+│   ├── build.gradle.kts
+│   └── settings.gradle.kts
+└── docs/             # Documentación del proyecto
+```
+
+## 4. Orden de Migración Propuesto
+
+1. **Sprint 0**: Setup del proyecto Android (Compose + Material 3, tema claro/oscuro, navegación base).
+2. **Sprint 1**: Módulo más simple para validar pipeline end-to-end → **Calculadora**.
+3. **Sprint 2**: Módulos "S" restantes → **Promedios**, **Agenda**.
+4. **Sprint 3**: Módulos "M" → **Lector PDF**, **Música**, **Tablero**, **Enlaces**.
+5. **Sprint 4**: Módulos "L" → **Dashboard (Inicio)**, **Académico (UdeA reenfocado)**.
+6. **Sprint 5**: Features nuevas del prompt original (contador "cuánto falta", recordatorios rápidos, notas, hábitos, Pomodoro, temas dinámicos).
+7. **Sprint 6**: Estabilidad, auditoría final, tests, publicación.
