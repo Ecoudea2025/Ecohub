@@ -72,3 +72,4 @@ captures/
 
 local.properties
 .idea/
+*.pyc
