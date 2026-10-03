@@ -8,7 +8,7 @@ Este documento rastrea el progreso de la transformación de Ecohub en una app An
 - [x] Crear `AGENTS.md` con reglas permanentes.
 - [x] Actualizar `.gitignore`.
 - [x] Crear este `ROADMAP.md`.
-- [ ] Setup del proyecto Android (`/android`): Gradle, Compose, Material 3, tema claro/oscuro, navegación base.
+- [x] Setup del proyecto Android (`/android`): Gradle, Compose, Material 3, tema claro/oscuro, navegación base.
 
 ## Sprint 1 — Validación End-to-End
 - [ ] Migrar **Calculadora**: UI mobile nativa, teclado grande de uso diario/gastos.
