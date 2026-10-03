@@ -55,3 +55,18 @@ media/*.mp4
 
 # Carpetas privadas y datos personales de autor
 Ude@/
+
+# Android Build artifacts & Configs
+*.iml
+.gradle/
+local.properties
+/.idea/caches/build_file_checksums.ser
+/.idea/libraries/
+/.idea/modules.xml
+/.idea/workspace.xml
+.DS_Store
+build/
+captures/
+.externalNativeBuild
+.cxx
+local.properties
