@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="oscuro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecohub · Laboratorio de estudio · Economía UdeA</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 115'%3E%3Cpath fill='%236c9a06' d='M4 4h58v7.5H48V21h-4.5v5.5H38v5H20V62H4z'/%3E%3Cpath fill='%236c9a06' d='M21 94h75v19H11v-7.5h10V99h0z'/%3E%3Crect x='76.5' y='6' width='13' height='15.5' fill='%236c9a06'/%3E%3Crect x='4' y='67' width='9' height='38' fill='%236c9a06'/%3E%3Crect x='17' y='73' width='9' height='22' fill='%23E46C67'/%3E%3Crect x='32' y='43' width='9.5' height='39' fill='%236c9a06'/%3E%3Crect x='58' y='57.5' width='7' height='11' fill='%236c9a06'/%3E%3Crect x='69' y='59' width='7' height='14' fill='%23E46C67'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/Flip.min.js"></script>
+<script type="importmap">
+{
+  "imports": {
+    "animejs": "https://cdn.jsdelivr.net/npm/animejs@4.5.0/dist/modules/index.js"
+  }
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<link rel="stylesheet" href="css/styles.css?v=20260921_appmode2">
+</head>
+<body>
+
+<!-- Preloader (085 counter + cortina con Logo E) -->
+<div id="preloader" aria-hidden="true">
+  <div class="pl-center">
+    <svg class="pl-logo brand-candle-logo" viewBox="0 0 100 115" width="76" height="88">
+      <g class="logo-e-frame">
+        <path class="logo-bracket bracket-top" fill="#6c9a06" d="M 4 4 L 62 4 L 62 11.5 L 48 11.5 L 48 21 L 43.5 21 L 43.5 26.5 L 38 26.5 L 38 31.5 L 20 31.5 L 20 62 L 4 62 Z"/>
+        <path class="logo-bracket bracket-bottom" fill="#6c9a06" d="M 21 94 L 96 94 L 96 113 L 11 113 L 11 105.5 L 21 105.5 L 21 99 L 21 94 Z"/>
+        <rect class="logo-bracket bracket-notch" x="11" y="105.5" width="10" height="7.5" fill="#6c9a06"/>
+        <rect class="logo-bracket bracket-block" x="76.5" y="6" width="13" height="15.5" fill="#6c9a06"/>
+      </g>
+      <g class="logo-candles">
+        <g class="candle candle-green c-1"><rect class="c-body" x="4" y="67" width="9" height="38" fill="#6c9a06"/><rect class="c-wick wick-top" x="7.5" y="61" width="2" height="6" fill="#6c9a06"/><rect class="c-wick wick-btm" x="7.5" y="105" width="2" height="8" fill="#6c9a06"/></g>
+        <g class="candle candle-red c-2"><rect class="c-body" x="17" y="73" width="9" height="22" fill="#E46C67"/><rect class="c-wick wick-top" x="20.5" y="65" width="2" height="8" fill="#E46C67"/><rect class="c-wick wick-btm" x="20.5" y="95" width="2" height="10" fill="#E46C67"/></g>
+        <g class="candle candle-green c-3"><rect class="c-body" x="32" y="43" width="9.5" height="39" fill="#6c9a06"/><rect class="c-wick wick-top" x="36" y="36" width="2" height="7" fill="#6c9a06"/><rect class="c-wick wick-btm" x="36" y="82" width="2" height="9" fill="#6c9a06"/></g>
+        <g class="candle candle-red c-4"><rect class="c-body" x="48" y="59" width="6.5" height="9" fill="#E46C67"/><rect class="c-wick wick-top" x="50.5" y="54.5" width="1.8" height="4.5" fill="#E46C67"/><rect class="c-wick wick-btm" x="50.5" y="68" width="1.8" height="6" fill="#E46C67"/></g>
+        <g class="candle candle-green c-5"><rect class="c-body" x="58" y="57.5" width="7" height="11" fill="#6c9a06"/><rect class="c-wick wick-top" x="60.8" y="52" width="1.6" height="5.5" fill="#6c9a06"/><rect class="c-wick wick-btm" x="60.8" y="68.5" width="1.6" height="5" fill="#6c9a06"/></g>
+        <g class="candle candle-red c-6"><rect class="c-body" x="69" y="59" width="7" height="14" fill="#E46C67"/><rect class="c-wick wick-top" x="72" y="54.5" width="1.6" height="4.5" fill="#E46C67"/><rect class="c-wick wick-btm" x="72" y="73" width="1.6" height="7" fill="#E46C67"/></g>
+        <g class="candle candle-green c-7"><rect class="c-body" x="80.5" y="57" width="7.5" height="15" fill="#6c9a06"/><rect class="c-wick wick-top" x="83.5" y="51" width="1.6" height="6" fill="#6c9a06"/><rect class="c-wick wick-btm" x="83.5" y="72" width="1.6" height="5.5" fill="#6c9a06"/></g>
+        <g class="candle candle-green c-8"><rect class="c-body" x="51" y="24" width="9.5" height="22" fill="#6c9a06"/><rect class="c-wick wick-top" x="55" y="16" width="2" height="8" fill="#6c9a06"/><rect class="c-wick wick-btm" x="55" y="46" width="2" height="10" fill="#6c9a06"/></g>
+        <g class="candle candle-green c-9"><rect class="c-body" x="63.5" y="7.5" width="9" height="22" fill="#6c9a06"/><rect class="c-wick wick-top" x="67.2" y="0.5" width="2" height="7" fill="#6c9a06"/><rect class="c-wick wick-btm" x="67.2" y="29.5" width="2" height="7" fill="#6c9a06"/></g>
+      </g>
+    </svg>
+    <div class="pl-title">Eco<span>hub</span></div>
+    <div class="pl-count" id="plCount">0%</div>
+    <div class="pl-bar"><div id="plBar"></div></div>
+  </div>
+</div>
+
+<!-- Fondo decorativo (z-0, no interactivo) -->
+<div class="bg-blobs" aria-hidden="true">
+  <div class="blob blob-a"></div>
+  <div class="blob blob-b"></div>
+  <div class="blob blob-c"></div>
+  <div class="blob blob-d"></div>
+</div>
+
+<!-- 095 cursor spotlight · 094 partículas flotantes -->
+<div id="spotlight" aria-hidden="true"></div>
+<div id="particles" aria-hidden="true"></div>
+
+<!-- Navbar (z-40) -->
+<header id="navbar" class="navbar">
+  <div class="nav-inner">
+    <a href="#/inicio" class="brand" id="brandLogo" aria-label="Ecohub" title="Ecohub — Clic para jugarreta">
+      <div class="brand-logo-frame">
+        <svg class="brand-candle-logo" viewBox="0 0 100 115" width="28" height="32" aria-hidden="true">
+          <g class="logo-e-frame">
+            <path class="logo-bracket bracket-top" fill="#6c9a06" d="M 4 4 L 62 4 L 62 11.5 L 48 11.5 L 48 21 L 43.5 21 L 43.5 26.5 L 38 26.5 L 38 31.5 L 20 31.5 L 20 62 L 4 62 Z"/>
+            <path class="logo-bracket bracket-bottom" fill="#6c9a06" d="M 21 94 L 96 94 L 96 113 L 11 113 L 11 105.5 L 21 105.5 L 21 99 L 21 94 Z"/>
+            <rect class="logo-bracket bracket-notch" x="11" y="105.5" width="10" height="7.5" fill="#6c9a06"/>
+            <rect class="logo-bracket bracket-block" x="76.5" y="6" width="13" height="15.5" fill="#6c9a06"/>
+          </g>
+          <g class="logo-candles">
+            <g class="candle candle-green c-1"><rect class="c-body" x="4" y="67" width="9" height="38" fill="#6c9a06"/><rect class="c-wick wick-top" x="7.5" y="61" width="2" height="6" fill="#6c9a06"/><rect class="c-wick wick-btm" x="7.5" y="105" width="2" height="8" fill="#6c9a06"/></g>
+            <g class="candle candle-red c-2"><rect class="c-body" x="17" y="73" width="9" height="22" fill="#E46C67"/><rect class="c-wick wick-top" x="20.5" y="65" width="2" height="8" fill="#E46C67"/><rect class="c-wick wick-btm" x="20.5" y="95" width="2" height="10" fill="#E46C67"/></g>
+            <g class="candle candle-green c-3"><rect class="c-body" x="32" y="43" width="9.5" height="39" fill="#6c9a06"/><rect class="c-wick wick-top" x="36" y="36" width="2" height="7" fill="#6c9a06"/><rect class="c-wick wick-btm" x="36" y="82" width="2" height="9" fill="#6c9a06"/></g>
+            <g class="candle candle-red c-4"><rect class="c-body" x="48" y="59" width="6.5" height="9" fill="#E46C67"/><rect class="c-wick wick-top" x="50.5" y="54.5" width="1.8" height="4.5" fill="#E46C67"/><rect class="c-wick wick-btm" x="50.5" y="68" width="1.8" height="6" fill="#E46C67"/></g>
+            <g class="candle candle-green c-5"><rect class="c-body" x="58" y="57.5" width="7" height="11" fill="#6c9a06"/><rect class="c-wick wick-top" x="60.8" y="52" width="1.6" height="5.5" fill="#6c9a06"/><rect class="c-wick wick-btm" x="60.8" y="68.5" width="1.6" height="5" fill="#6c9a06"/></g>
+            <g class="candle candle-red c-6"><rect class="c-body" x="69" y="59" width="7" height="14" fill="#E46C67"/><rect class="c-wick wick-top" x="72" y="54.5" width="1.6" height="4.5" fill="#E46C67"/><rect class="c-wick wick-btm" x="72" y="73" width="1.6" height="7" fill="#E46C67"/></g>
+            <g class="candle candle-green c-7"><rect class="c-body" x="80.5" y="57" width="7.5" height="15" fill="#6c9a06"/><rect class="c-wick wick-top" x="83.5" y="51" width="1.6" height="6" fill="#6c9a06"/><rect class="c-wick wick-btm" x="83.5" y="72" width="1.6" height="5.5" fill="#6c9a06"/></g>
+            <g class="candle candle-green c-8"><rect class="c-body" x="51" y="24" width="9.5" height="22" fill="#6c9a06"/><rect class="c-wick wick-top" x="55" y="16" width="2" height="8" fill="#6c9a06"/><rect class="c-wick wick-btm" x="55" y="46" width="2" height="10" fill="#6c9a06"/></g>
+            <g class="candle candle-green c-9"><rect class="c-body" x="63.5" y="7.5" width="9" height="22" fill="#6c9a06"/><rect class="c-wick wick-top" x="67.2" y="0.5" width="2" height="7" fill="#6c9a06"/><rect class="c-wick wick-btm" x="67.2" y="29.5" width="2" height="7" fill="#6c9a06"/></g>
+          </g>
+        </svg>
+      </div>
+      <span class="brand-letters-wrap">
+        <span class="brand-letters">
+          <span class="b-char">c</span><span class="b-char">o</span><span class="b-char accent">h</span><span class="b-char accent">u</span><span class="b-char accent">b</span>
+        </span>
+      </span>
+    </a>
+    <nav class="nav-links" id="navLinks" aria-label="Secciones">
+      <a href="#/inicio" data-sec="inicio" class="active"><i class="ri-home-4-line"></i><span>Inicio</span></a>
+      <a href="#/pdf" data-sec="pdf"><i class="ri-file-pdf-2-line"></i><span>PDF</span></a>
+      <a href="#/udea" data-sec="udea"><i class="ri-graduation-cap-line"></i><span>UdeA</span></a>
+      <a href="#/herramientas" data-sec="herramientas"><i class="ri-function-line"></i><span>Herramientas</span></a>
+      <a href="#/agenda" data-sec="agenda"><i class="ri-calendar-check-line"></i><span>Agenda</span></a>
+      <a href="#/musica" data-sec="musica"><i class="ri-music-2-line"></i><span>Música</span></a>
+      <a href="#/enlaces" data-sec="enlaces"><i class="ri-link-m"></i><span>Enlaces</span></a>
+      <a href="#/tablero" data-sec="tablero"><i class="ri-artboard-line"></i><span>Tablero</span></a>
+      <a href="#/laboratorios" data-sec="laboratorios" class="lab-link"><i class="ri-flask-line"></i><span>Labs</span></a>
+    </nav>
+    <div class="nav-right">
+      <button id="themeBtn" class="icon-btn" title="Cambiar tema (T)" aria-label="Cambiar tema"><i class="ri-palette-line"></i></button>
+      <button id="menuBtn" class="icon-btn menu-btn" title="Menú" aria-label="Menú"><i class="ri-menu-line"></i></button>
+    </div>
+  </div>
+</header>
+<div id="navBackdrop" class="nav-backdrop hidden"></div>
+
+<main class="main">
+
+<!-- ============ INICIO ============ -->
+<section id="sec-inicio" class="page active">
+  <div class="hero">
+    <p class="hero-eyebrow" id="heroEyebrow">Laboratorio personal · Economía UdeA</p>
+    <h1 class="hero-title" id="heroTitle">Estudia, aprende<br>y <span class="accent">desarrolla ideas</span></h1>
+    <p class="hero-sub" id="heroSub">Un solo lugar para tus apuntes, herramientas económicas, planificación con tu agente y todo lo que te hace querer estudiar.</p>
+    <div class="hero-cta">
+      <a href="#/agenda" class="btn btn-primary"><i class="ri-calendar-check-line"></i> Planificar hoy</a>
+      <a href="#/pdf" class="btn btn-ghost"><i class="ri-file-pdf-2-line"></i> Abrir un PDF</a>
+    </div>
+    <div class="hero-chart" id="heroChart" role="img" aria-label="Gráfica interactiva de análisis económico y cálculo">
+      <svg id="heroSvg" viewBox="0 0 480 120" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="gradA" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#6c9a06"/>
+            <stop offset="0.5" stop-color="#069a7e"/>
+            <stop offset="1" stop-color="#127599"/>
+          </linearGradient>
+          <linearGradient id="gradArea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#6c9a06" stop-opacity="0.45"/>
+            <stop offset="65%" stop-color="#069a7e" stop-opacity="0.15"/>
+            <stop offset="100%" stop-color="#069a7e" stop-opacity="0"/>
+          </linearGradient>
+          <linearGradient id="gradTangent" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#ffc107" stop-opacity="0.05"/>
+            <stop offset="50%" stop-color="#ffc107" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#ffc107" stop-opacity="0.05"/>
+          </linearGradient>
+          <filter id="glowGold" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" result="blur"/>
+            <feMerge>
+              <feMergeNode in="blur"/>
+              <feMergeNode in="SourceGraphic"/>
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- Área de la integral bajo la curva (Excedente) -->
+        <path id="heroArea" d="M 0 120 L 0 100 L 480 14 L 480 120 Z" fill="url(#gradArea)"/>
+
+        <!-- Franjas verticales de Riemann animadas -->
+        <g id="riemannGroup"></g>
+
+        <!-- Curva secundaria (oferta / senda de equilibrio / costo marginal) -->
+        <path id="heroLine2" d="M0 108 C80 100 120 78 180 80 C240 82 260 100 320 84 C370 72 420 60 480 48" fill="none" stroke="var(--pal-highlight)" stroke-width="2" stroke-dasharray="6 6" opacity="0.7"/>
+
+        <!-- Curva principal (función objetivo / demanda / producción) -->
+        <path id="heroLine" d="M0 100 C60 90 90 60 140 62 C190 64 210 90 260 70 C310 50 340 30 400 34 C430 36 460 20 480 14" fill="none" stroke="url(#gradA)" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Recta tangente (Derivada dy/dx) -->
+        <line id="heroTangent" x1="0" y1="0" x2="0" y2="0" stroke="url(#gradTangent)" stroke-width="2" stroke-linecap="round"/>
+
+        <!-- Marcador de punto de equilibrio con anillo de onda expansiva -->
+        <g id="heroEqMarker">
+          <circle id="heroEqRing" cx="240" cy="75" r="14" fill="none" stroke="#6c9a06" stroke-width="1.5" opacity="0.8"/>
+          <circle id="heroEqDot" cx="240" cy="75" r="4.5" fill="#6c9a06" filter="url(#glowGold)"/>
+        </g>
+
+        <!-- Punto trazador dorado dinámico -->
+        <circle id="heroDot" cx="0" cy="0" r="5" fill="#ffc107" filter="url(#glowGold)"/>
+
+        <!-- Píldora interactiva con fórmula matemática / concepto económico -->
+        <g id="heroMathBadge" pointer-events="none">
+          <rect id="heroBadgeBg" x="0" y="0" width="105" height="26" rx="13" fill="rgba(11, 20, 14, 0.92)" stroke="rgba(108, 154, 6, 0.75)" stroke-width="1.2"/>
+          <text id="heroBadgeText" x="0" y="0" fill="#a3e635" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="11.5" font-weight="600" text-anchor="middle" dominant-baseline="central">f'(x*) = 0</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+
+  <div class="today-panel glass" id="todayPanel">
+    <div class="today-head">
+      <h2><i class="ri-sun-line"></i> Hoy <span id="todayDate"></span></h2>
+      <a href="#/agenda" class="btn btn-ghost btn-sm">Ir a la agenda <i class="ri-arrow-right-line"></i></a>
+    </div>
+    <div id="todayContent" class="today-content">
+      <div class="skeleton-line"></div><div class="skeleton-line w60"></div>
+    </div>
+  </div>
+
+  <div class="stats-strip" id="statsStrip">
+    <div class="stat"><span class="stat-num" id="stDays">0</span><span class="stat-label">días con tareas</span></div>
+    <div class="stat"><span class="stat-num" id="stTasks">0</span><span class="stat-label">tareas planificadas</span></div>
+    <div class="stat"><span class="stat-num" id="stDone">0</span><span class="stat-label">tareas hechas</span></div>
+    <div class="stat"><span class="stat-num" id="stPdf">0</span><span class="stat-label">PDFs recientes</span></div>
+  </div>
+
+  <h2 class="section-title" id="cardsTitle">Tu laboratorio</h2>
+  <div class="cards-grid" id="homeCards"></div>
+</section>
+
+<!-- ============ EDITOR PDF ============ -->
+<section id="sec-pdf" class="page">
+  <div class="pdf-app">
+    <!-- Barra superior unificada (estilo Adobe) -->
+    <div class="pdf-bar">
+      <div class="pdf-bar-group">
+        <div class="pdf-mini-brand" title="Ecohub PDF">
+          <svg viewBox="0 0 48 48" width="26" height="26" aria-hidden="true">
+            <rect x="3" y="3" width="42" height="42" rx="12" fill="url(#pdfgrad2)"/>
+            <path d="M14 32 L24 16 L31 26 L34 22" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs><linearGradient id="pdfgrad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#127599"/><stop offset="1" stop-color="#069a7e"/></linearGradient></defs>
+          </svg>
+        </div>
+        <span id="pdfFileName" class="truncate pdf-filename">Sin documento</span>
+        <span id="pdfLoading" class="badge hidden"><i class="ri-loader-4-line spin"></i> Procesando…</span>
+      </div>
+
+      <div class="pdf-bar-group">
+        <button class="bar-btn docs-btn" id="pdfDocBtn" title="Abrir o gestionar documentos"><i class="ri-folder-open-line"></i><span>Abrir PDF</span></button>
+        <div class="pdf-dropdown hidden" id="pdfDocMenu">
+          <label class="dropzone" id="pdfDrop">
+            <input type="file" id="pdfInput" multiple accept=".pdf">
+            <i class="ri-file-upload-line"></i>
+            <span>Sube PDFs o arrastra</span>
+          </label>
+          <h4>Abiertos</h4>
+          <div class="doc-list" id="pdfDocList"></div>
+          <h4>Recientes</h4>
+          <div class="recents" id="pdfRecents"></div>
+          <h4>Historial</h4>
+          <div class="hist-list" id="pdfHistList"></div>
+        </div>
+      </div>
+
+      <div class="pdf-bar-group">
+        <button class="bar-btn" id="pgPrev" title="Página anterior (?)"><i class="ri-arrow-left-s-line"></i></button>
+        <input type="number" id="pageNum" class="bar-num" value="1" min="1" title="Ir a página">
+        <span class="bar-muted">/ <b id="pageCount">--</b></span>
+        <button class="bar-btn" id="pgNext" title="Página siguiente (?)"><i class="ri-arrow-right-s-line"></i></button>
+      </div>
+
+      <div class="pdf-bar-group" id="pdfZoomGroup">
+        <button class="bar-btn" id="zoomOut" title="Alejar"><i class="ri-zoom-out-line"></i></button>
+        <button class="bar-btn zoom-val" id="zoomVal" title="Restablecer 100% (doble clic)">100%</button>
+        <button class="bar-btn" id="zoomIn" title="Acercar"><i class="ri-zoom-in-line"></i></button>
+        <button class="bar-btn" id="fitBtn" title="Ajustar al ancho"><i class="ri-fullscreen-line"></i></button>
+      </div>
+
+      <div class="pdf-bar-group" id="pdfReadModeGroup">
+        <button class="bar-btn" id="readModeBtn" title="Modo de lectura"><i class="ri-contrast-2-line"></i><span>Lectura</span></button>
+        <div class="pdf-dropdown hidden" id="readModeMenu">
+          <div class="chip-row" id="readModeChips"></div>
+          <label class="prop-dash" style="margin-top:8px"><input type="checkbox" id="textLayerChk" checked> Texto seleccionable</label>
+        </div>
+      </div>
+
+      <div class="pdf-bar-group" id="pdfHistoryGroup">
+        <button class="bar-btn" id="undoBtn" title="Deshacer (Ctrl+Z)" disabled><i class="ri-arrow-go-back-line"></i></button>
+        <button class="bar-btn" id="redoBtn" title="Rehacer (Ctrl+Shift+Z)" disabled><i class="ri-arrow-go-forward-line"></i></button>
+      </div>
+
+      <div class="pdf-bar-group" id="pdfActionsGroup">
+        <button class="bar-btn" id="fsBtn" title="Pantalla completa (F)"><i class="ri-fullscreen-line"></i></button>
+        <button class="bar-btn primary" id="saveBtn" title="Guardar en archivo local (Ctrl+S)"><i class="ri-save-3-line"></i> Guardar</button>
+        <button class="bar-btn primary" id="downloadBtn" title="Descargar copia"><i class="ri-download-2-line"></i> Descargar</button>
+      </div>
+
+      <div class="pdf-bar-group pdf-bar-more-group">
+        <button class="bar-btn" id="pdfMoreBtn" title="Más opciones"><i class="ri-more-fill"></i> <span>Más</span></button>
+        <div class="pdf-dropdown hidden" id="pdfMoreMenu">
+          <button class="bmm-item" id="pmmReadMode"><i class="ri-contrast-2-line"></i> <span>Modo de lectura</span></button>
+          <button class="bmm-item" id="pmmFit"><i class="ri-fullscreen-line"></i> <span>Ajustar al ancho</span></button>
+          <button class="bmm-item" id="pmmZoomIn"><i class="ri-zoom-in-line"></i> <span>Acercar (+)</span></button>
+          <button class="bmm-item" id="pmmZoomOut"><i class="ri-zoom-out-line"></i> <span>Alejar (-)</span></button>
+          <button class="bmm-item" id="pmmUndo"><i class="ri-arrow-go-back-line"></i> <span>Deshacer (Ctrl+Z)</span></button>
+          <button class="bmm-item" id="pmmRedo"><i class="ri-arrow-go-forward-line"></i> <span>Rehacer (Ctrl+Y)</span></button>
+          <button class="bmm-item" id="pmmSave"><i class="ri-save-3-line"></i> <span>Guardar en archivo</span></button>
+          <button class="bmm-item" id="pmmDownload"><i class="ri-download-2-line"></i> <span>Descargar copia</span></button>
+          <button class="bmm-item" id="pmmFull"><i class="ri-fullscreen-line"></i> <span>Pantalla completa</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Fila de herramientas unificada -->
+    <div class="pdf-tools-row" id="pdfToolsRow">
+      <div class="tool-grid" id="toolGrid"></div>
+    </div>
+
+    <!-- Visualizador a pantalla completa -->
+    <div class="pdf-workspace" id="pdfWorkspace">
+      <div class="pdf-empty" id="pdfEmpty">
+        <i class="ri-file-pdf-2-line"></i>
+        <h3>Sube un PDF para comenzar</h3>
+        <p>Anota, lee en modo oscuro/sepia/navy y exporta con tus dibujos.</p>
+      </div>
+      <div class="pdf-pages" id="pdfPages"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UDEA ============ -->
+<section id="sec-udea" class="page">
+  <div class="page-head">
+    <h1><i class="ri-graduation-cap-line accent"></i> <span data-scramble>UdeA</span></h1>
+    <p>Tu plataforma de estudiante y el sitio institucional, siempre a un clic.</p>
+  </div>
+  <div class="tab-bar" id="udeaTabs" role="tablist">
+    <button class="tab active" data-tab="udearroba" role="tab">Ude@ · Estudiante</button>
+    <button class="tab" data-tab="institucional" role="tab">UdeA · Institucional</button>
+  </div>
+  <div class="iframe-wrap">
+    <iframe id="frame-udearroba" title="Ude@ · Plataforma de estudiante"
+      src="https://udearroba.udea.edu.co/home/" loading="lazy"
+      allow="storage-access *; fullscreen *; clipboard-read; clipboard-write"
+      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
+      referrerpolicy="strict-origin-when-cross-origin"></iframe>
+    <iframe id="frame-institucional" title="UdeA · Sitio institucional"
+      src="https://www.udea.edu.co/" loading="lazy" class="hidden"
+      allow="storage-access *; fullscreen *; clipboard-read; clipboard-write"
+      sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation allow-storage-access-by-user-activation"
+      referrerpolicy="strict-origin-when-cross-origin"></iframe>
+  </div>
+  <div id="udeaCookieBanner" class="glass hidden" style="margin-top:14px; padding:12px 14px; border-radius:12px; border-left: 4px solid var(--pal-highlight); display:flex; gap:12px; align-items:center; flex-wrap:wrap">
+    <i class="ri-error-warning-line" style="font-size:1.4rem; color:var(--pal-highlight)"></i>
+    <div style="flex:1; min-width:220px">
+      <b style="font-size:0.92rem">Error EJPSD0020E: cookies bloqueadas</b>
+      <p style="font-size:0.84rem; color:var(--muted); margin:2px 0 0">WAS requiere cookies de sesión (WASReqURL/JSESSIONID). En <b>Edge</b>: edge://settings/content/cookies ? Permitir [*.]udea.edu.co y http://localhost (o usa Equilibrada). Activa y recarga.</p>
+    </div>
+    <button class="btn btn-primary btn-sm" id="udeaCookieBtn"><i class="ri-cookie-line"></i> Activar cookies e iniciar sesión</button>
+    <button class="btn btn-ghost btn-sm" id="udeaCookieExternal"><i class="ri-external-link-line"></i> Abrir en pestaña nueva</button>
+    <button class="btn btn-primary btn-sm" id="udeaProxyBtn"><i class="ri-shield-keyhole-line"></i> Cargar vía proxy local</button>
+  </div>
+  <div class="row" style="justify-content:center; gap:12px; margin-top:14px">
+    <button class="btn btn-ghost btn-sm" id="udeaReload"><i class="ri-refresh-line"></i> Reintentar</button>
+    <button class="btn btn-primary btn-sm" id="udeaExternal"><i class="ri-external-link-line"></i> Abrir en pestaña nueva</button>
+    <button class="btn btn-ghost btn-sm" id="udeaProxyBtn2"><i class="ri-shield-keyhole-line"></i> Proxy</button>
+  </div>
+</section>
+
+<!-- ============ HERRAMIENTAS ============ -->
+<section id="sec-herramientas" class="page">
+  <div class="page-head">
+    <h1><i class="ri-function-line accent"></i> <span data-scramble>Herramientas económicas</span></h1>
+    <p>Cada herramienta es su propio espacio de trabajo. Elige una para abrirla.</p>
+  </div>
+
+  <!-- Landing: recuadros de acceso -->
+  <div id="toolsLanding" class="tools-landing">
+    <a class="tool-door" href="#/herramientas/calculadora" data-reveal style="--tc1:#127599;--tc2:#069a7e">
+      <div class="td-icon"><i class="ri-calculator-line"></i></div>
+      <h3>Calculadora</h3>
+      <p>Científica de 15 dígitos con Python (pyodide). Cuerpo físico, teclado completo e historial.</p>
+      <span class="td-go">Abrir espacio <i class="ri-arrow-right-line"></i></span>
+    </a>
+    <a class="tool-door" href="#/herramientas/graficadora" data-reveal style="--tc1:#069a7e;--tc2:#ffc107">
+      <div class="td-icon"><i class="ri-line-chart-line"></i></div>
+      <h3>Graficadora pro</h3>
+      <p>4 modos: f(x), paramétrico, polar y f(x,y). Derivada, tangente, integral/área, raíces, extremos, intersecciones, tabla y exportación PNG/CSV.</p>
+      <span class="td-go">Abrir espacio <i class="ri-arrow-right-line"></i></span>
+    </a>
+    <a class="tool-door" href="#/herramientas/conceptos" data-reveal style="--tc1:#5f4786;--tc2:#069a7e">
+      <div class="td-icon"><i class="ri-lightbulb-flash-line"></i></div>
+      <h3>Conceptos económicos</h3>
+      <p>Tarjetas interactivas: interés compuesto con simulador, inflación, elasticidad y más.</p>
+      <span class="td-go">Abrir espacio <i class="ri-arrow-right-line"></i></span>
+    </a>
+    <a class="tool-door" href="#/herramientas/modelos" data-reveal style="--tc1:#6c9a06;--tc2:#33691e">
+      <div class="td-icon"><i class="ri-funds-line"></i></div>
+      <h3>Modelos de crecimiento</h3>
+      <p>Solow en vivo: ahorro, depreciación, población y estado estacionario.</p>
+      <span class="td-go">Abrir espacio <i class="ri-arrow-right-line"></i></span>
+    </a>
+    <a class="tool-door" href="#/herramientas/promedios" data-reveal style="--tc1:#069a7e;--tc2:#127599">
+      <div class="td-icon"><i class="ri-medal-line"></i></div>
+      <h3>Promedios y notas</h3>
+      <p>Promedio ponderado por créditos, materias y evaluaciones con su porcentaje. Te dice cuánto necesitas en lo que falta para llegar a tu meta.</p>
+      <span class="td-go">Abrir espacio <i class="ri-arrow-right-line"></i></span>
+    </a>
+    <a class="tool-door" href="#/herramientas/juegos" data-reveal style="--tc1:#bf360c;--tc2:#ff8f00">
+      <div class="td-icon"><i class="ri-team-line"></i></div>
+      <h3>Árboles de juegos</h3>
+      <p>Forma extensiva para economía: nodos de decisión, azar, conjuntos de información, pagos y SPNE. Exporta a LaTeX, Gambit y PNG.</p>
+      <span class="td-go">Abrir espacio <i class="ri-arrow-right-line"></i></span>
+    </a>
+  </div>
+
+  <!-- Página: Calculadora -->
+  <div class="tool-page hidden" id="toolPage-calc">
+    <div class="tool-page-head">
+      <a href="#/herramientas" class="btn btn-ghost btn-sm"><i class="ri-arrow-left-line"></i> Herramientas</a>
+      <h2><i class="ri-calculator-line accent"></i> <span data-scramble>Calculadora</span></h2>
+      <span class="badge">mathjs · 15 dígitos · Python</span>
+    </div>
+    <div class="tool-page-body" id="calcBody"><i class="ri-loader-4-line spin"></i> Cargando…</div>
+  </div>
+
+  <!-- Página: Graficadora -->
+  <div class="tool-page hidden" id="toolPage-plot">
+    <div class="tool-page-head">
+      <a href="#/herramientas" class="btn btn-ghost btn-sm"><i class="ri-arrow-left-line"></i> Herramientas</a>
+      <h2><i class="ri-line-chart-line accent"></i> <span data-scramble>Graficadora pro</span></h2>
+      <span class="badge">4 modos · f(x) · param · polar · f(x,y)</span>
+    </div>
+    <div class="tool-page-body" id="plotBody"><i class="ri-loader-4-line spin"></i> Cargando…</div>
+  </div>
+
+  <!-- Página: Conceptos -->
+  <div class="tool-page hidden" id="toolPage-concepts">
+    <div class="tool-page-head">
+      <a href="#/herramientas" class="btn btn-ghost btn-sm"><i class="ri-arrow-left-line"></i> Herramientas</a>
+      <h2><i class="ri-lightbulb-flash-line accent"></i> <span data-scramble>Conceptos económicos</span></h2>
+      <span class="badge">interactivo</span>
+    </div>
+    <div class="tool-page-body" id="conceptsBody"></div>
+  </div>
+
+  <!-- Página: Modelos -->
+  <div class="tool-page hidden" id="toolPage-solow">
+    <div class="tool-page-head">
+      <a href="#/herramientas" class="btn btn-ghost btn-sm"><i class="ri-arrow-left-line"></i> Herramientas</a>
+      <h2><i class="ri-funds-line accent"></i> <span data-scramble>Modelos de crecimiento</span></h2>
+      <span class="badge">Solow</span>
+    </div>
+    <div class="tool-page-body" id="solowBody"></div>
+  </div>
+
+  <!-- Página: Árboles de juegos -->
+  <div class="tool-page hidden" id="toolPage-gametree">
+    <div class="tool-page-head">
+      <a href="#/herramientas" class="btn btn-ghost btn-sm"><i class="ri-arrow-left-line"></i> Herramientas</a>
+      <h2><i class="ri-team-line accent"></i> <span data-scramble>Árboles de juegos</span></h2>
+      <span class="badge">forma extensiva · SPNE · LaTeX/Gambit</span>
+    </div>
+    <div class="tool-page-body" id="gametreeBody"><i class="ri-loader-4-line spin"></i> Cargando…</div>
+  </div>
+
+  <!-- Página: Promedios y notas -->
+  <div class="tool-page hidden" id="toolPage-grades">
+    <div class="tool-page-head">
+      <a href="#/herramientas" class="btn btn-ghost btn-sm"><i class="ri-arrow-left-line"></i> Herramientas</a>
+      <h2><i class="ri-medal-line accent"></i> <span data-scramble>Promedios y notas</span></h2>
+      <span class="badge">ponderado · % · cuánto te falta</span>
+    </div>
+    <div class="tool-page-body" id="gradesBody"><i class="ri-loader-4-line spin"></i> Cargando…</div>
+  </div>
+</section>
+
+<!-- ============ AGENDA ============ -->
+<section id="sec-agenda" class="page">
+  <div class="page-head">
+    <h1><i class="ri-calendar-check-line accent"></i> <span data-scramble>Agenda</span></h1>
+    <p>Tu calendario privado, editable también por tu agente. Habla con él abajo.</p>
+  </div>
+  <div class="agenda-layout">
+    <div class="agenda-main glass">
+      <div class="cal-toolbar">
+        <div class="row">
+          <button class="icon-btn" id="calPrev" aria-label="Anterior"><i class="ri-arrow-left-s-line"></i></button>
+          <button class="icon-btn" id="calToday" title="Hoy"><i class="ri-calendar-line"></i></button>
+          <button class="icon-btn" id="calNext" aria-label="Siguiente"><i class="ri-arrow-right-s-line"></i></button>
+          <h2 id="calTitle"></h2>
+        </div>
+        <div class="row">
+          <div class="seg" id="calViewSeg">
+            <button class="seg-btn" data-view="month">Mes</button>
+            <button class="seg-btn" data-view="week">Semana</button>
+            <button class="seg-btn" data-view="day">Día</button>
+          </div>
+          <button class="btn btn-primary btn-sm" id="addEventBtn"><i class="ri-add-line"></i> Nuevo</button>
+          <button class="icon-btn" id="icsExport" title="Exportar .ics (Google Calendar)" aria-label="Exportar ICS"><i class="ri-download-2-line"></i></button>
+          <button class="icon-btn" id="icsImport" title="Importar .ics" aria-label="Importar ICS"><i class="ri-upload-2-line"></i></button>
+          <input type="file" id="icsFile" accept=".ics" hidden>
+          <button class="icon-btn" id="bellBtn" title="Recordatorios" aria-label="Recordatorios"><i class="ri-notification-3-line"></i></button>
+        </div>
+      </div>
+      <div id="calendar" class="calendar"></div>
+      <div class="agenda-side-row">
+        <div class="side-panel">
+          <h3><i class="ri-task-line"></i> Tareas del día</h3>
+          <div id="dayTasks"></div>
+          <form id="taskForm" class="task-form">
+            <input type="text" id="taskTitle" placeholder="Nueva tarea para este día…" required>
+            <button class="btn btn-primary btn-sm" type="submit"><i class="ri-add-line"></i></button>
+          </form>
+        </div>
+        <div class="side-panel">
+          <h3><i class="ri-history-line"></i> Changelog del agente</h3>
+          <div id="changelog" class="changelog"></div>
+        </div>
+      </div>
+    </div>
+    <aside class="chat-panel glass" id="chatPanel">
+      <header class="chat-head">
+        <div>
+          <h2><i class="ri-robot-2-line accent"></i> Tu agente planeador</h2>
+          <small id="chatModelLabel"></small>
+        </div>
+        <button class="icon-btn" id="chatConfigBtn" title="Configurar agente"><i class="ri-settings-3-line"></i></button>
+      </header>
+      <div class="chat-messages" id="chatMessages">
+        <div class="msg bot">
+          <p>Hola 👋 Soy tu agente planeador. Puedo leer tu agenda y el proyecto, y editar el calendario por ti. Prueba: <em>"mañana tengo que hacer esto, esto y esto"</em>, o usa <b>Plan de proyecto</b>.</p>
+        </div>
+      </div>
+      <div class="chat-suggests" id="chatSuggests">
+        <button class="chip" data-s="Mañana tengo: estudiar microeconomía, hacer el taller de macro y repasar para el parcial.">Agenda mañana</button>
+        <button class="chip" data-s="Tengo un trabajo de investigación económica para el 27 de diciembre. Genera un plan semanal.">Plan de proyecto</button>
+      </div>
+      <form id="chatForm" class="chat-form">
+        <textarea id="chatInput" rows="1" placeholder="Cuéntale tu día… (Enter envía, Shift+Enter salto de línea)" required></textarea>
+        <button class="btn btn-primary" type="submit" id="chatSend"><i class="ri-send-plane-2-line"></i></button>
+      </form>
+      <div id="chatBusy" class="chat-busy hidden">
+        <div class="loader"></div> <span>El agente está planificando… (puede tardar 30-60s)</span>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ============ MÚSICA ============ -->
+<section id="sec-musica" class="page">
+  <div class="page-head">
+    <h1><i class="ri-music-2-line accent"></i> <span data-scramble>Música</span></h1>
+    <p>Tus playlists de estudio. Pon tus audios en <code>media/</code> o añádelos por ruta.</p>
+  </div>
+  <div class="music-layout">
+    <aside class="playlist-panel glass">
+      <div class="row" style="justify-content:space-between">
+        <h2>Playlists</h2>
+        <button class="btn btn-ghost btn-sm" id="plAdd"><i class="ri-add-line"></i> Nueva</button>
+      </div>
+      <div id="playlistList" class="playlist-list"></div>
+      <div class="pl-tracks-head"><h3>Tracks</h3>
+        <button class="btn btn-ghost btn-sm" id="trackAdd"><i class="ri-add-line"></i> Añadir</button>
+      </div>
+      <div id="trackList" class="track-list"></div>
+    </aside>
+    <div class="music-main glass">
+      <div class="now-playing" id="nowPlaying">
+        <div class="np-art" id="npArt">
+          <i class="ri-music-2-line"></i>
+          <div class="eq-bars" id="eqBars" aria-hidden="true">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="np-meta">
+          <h2 id="npTitle">Nada sonando</h2>
+          <p id="npPlaylist">Elige una playlist</p>
+        </div>
+      </div>
+      <div class="np-controls">
+        <button class="icon-btn" id="plShuffle" title="Aleatorio"><i class="ri-shuffle-line"></i></button>
+        <button class="icon-btn" id="plPrev" title="Anterior"><i class="ri-skip-back-line"></i></button>
+        <button class="icon-btn big" id="plPlay" title="Play/Pausa"><i class="ri-play-fill"></i></button>
+        <button class="icon-btn" id="plNext" title="Siguiente"><i class="ri-skip-forward-line"></i></button>
+        <button class="icon-btn" id="plRepeat" title="Repetir"><i class="ri-repeat-line"></i></button>
+      </div>
+      <div class="np-progress">
+        <span id="curTime">0:00</span>
+        <input type="range" id="plSeek" value="0" max="1000" step="1">
+        <span id="durTime">0:00</span>
+      </div>
+      <div class="np-volume">
+        <i class="ri-volume-down-line"></i>
+        <input type="range" id="plVolume" min="0" max="100" value="80">
+        <i class="ri-volume-up-line"></i>
+      </div>
+      <audio id="audioEl" preload="metadata"></audio>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ENLACES ============ -->
+<section id="sec-enlaces" class="page">
+  <div class="page-head">
+    <h1><i class="ri-link-m accent"></i> <span data-scramble>Mis páginas</span></h1>
+    <p>Tus proyectos y sitios de autoría, siempre a la mano.</p>
+  </div>
+  <div class="links-grid" id="linksGrid"></div>
+  <div class="row" style="justify-content:center; margin-top:18px">
+    <button class="btn btn-ghost btn-sm" id="addLinkBtn"><i class="ri-add-line"></i> Añadir enlace</button>
+  </div>
+</section>
+
+<!-- ============ TABLERO ============ -->
+<section id="sec-tablero" class="page">
+  <div class="page-head">
+    <h1><i class="ri-artboard-line accent"></i> <span data-scramble>Tablero</span></h1>
+    <p>Tu pizarra infinita estilo hand-drawn: diagramas, oferta y demanda, fórmulas y anotaciones. Sin colaborativo, todo local.</p>
+  </div>
+  <div class="board-card glass" id="boardCard">
+    <div class="board-toolbar">
+      <div class="board-tabs" id="boardTabs" role="tablist" aria-label="Tableros"></div>
+      <div class="board-actions">
+        <button class="btn btn-ghost btn-sm" id="boardLatexBtn" title="Insertar fórmula LaTeX"><i class="ri-function-line"></i> <span>Fórmula</span></button>
+        <button class="btn btn-ghost btn-sm" id="boardPlotBtn" title="Traer la gráfica actual de la Graficadora"><i class="ri-line-chart-line"></i> <span>Traer gráfica</span></button>
+        <button class="btn btn-ghost btn-sm" id="boardPropsBtn" title="Herramienta: color, grosor, estilo (panel izquierdo)"><i class="ri-tools-line"></i> <span>Herramienta</span></button>
+        <button class="btn btn-ghost btn-sm" id="boardPresetsBtn" title="Librería: símbolos y presets (panel derecho)"><i class="ri-layout-grid-line"></i> <span>Librería</span></button>
+        <button class="btn btn-ghost btn-sm" id="boardToggleToolbarBtn" title="Contraer o mostrar barra de herramientas de dibujo"><i class="ri-layout-top-line"></i> <span>Barra</span></button>
+        <button class="btn btn-ghost btn-sm" id="boardPngBtn" title="Exportar PNG"><i class="ri-image-line"></i> <span>PNG</span></button>
+        <button class="btn btn-ghost btn-sm" id="boardFileBtn" title="Guardar archivo .excalidraw"><i class="ri-download-2-line"></i></button>
+        <button class="btn btn-ghost btn-sm" id="boardImportBtn" title="Abrir archivo .excalidraw"><i class="ri-upload-2-line"></i></button>
+        <button class="btn btn-ghost btn-sm" id="boardFullBtn" title="Pantalla completa"><i class="ri-fullscreen-line"></i></button>
+        <button class="btn btn-ghost btn-sm board-more-btn" id="boardMoreBtn" title="Más opciones"><i class="ri-more-fill"></i> <span>Más</span></button>
+      </div>
+      <div class="board-more-menu hidden" id="boardMoreMenu">
+        <button class="bmm-item" id="bmmLatex"><i class="ri-function-line"></i> <span>Fórmula LaTeX</span></button>
+        <button class="bmm-item" id="bmmPlot"><i class="ri-line-chart-line"></i> <span>Traer gráfica</span></button>
+        <button class="bmm-item" id="bmmToggleBar"><i class="ri-layout-top-line"></i> <span>Ocultar/mostrar barra dibujo</span></button>
+        <button class="bmm-item" id="bmmPng"><i class="ri-image-line"></i> <span>Exportar imagen PNG</span></button>
+        <button class="bmm-item" id="bmmFile"><i class="ri-download-2-line"></i> <span>Guardar archivo (.excalidraw)</span></button>
+        <button class="bmm-item" id="bmmImport"><i class="ri-upload-2-line"></i> <span>Abrir archivo local</span></button>
+        <button class="bmm-item" id="bmmFull"><i class="ri-fullscreen-line"></i> <span>Pantalla completa</span></button>
+      </div>
+    </div>
+    <input type="file" id="boardImportInput" accept=".excalidraw,.json" hidden>
+    <div class="board-stage" id="boardStage">
+      <div id="boardSideBackdrop" class="board-side-backdrop hidden"></div>
+      <!-- Panel lateral IZQUIERDO: Herramienta, texto, capas y color -->
+      <aside class="board-side board-side-left hidden" id="boardSideLeft" aria-label="Herramientas y edición">
+        <section class="board-side-sec" id="boardPropsSec">
+          <div class="board-sec-head"><b id="boardPropsTitle"><i class="ri-tools-line"></i> Herramienta</b>
+            <button class="icon-btn tiny" id="boardPropsClose" title="Cerrar"><i class="ri-close-line"></i></button>
+          </div>
+
+          <!-- Contenedor: Formas / Trazos (Rectángulos, Óvalos, Flechas, Lápiz) -->
+          <div id="bpShapeProps" class="bp-panel-sub">
+            <div class="bp-row">
+              <span class="bp-label">Color para</span>
+              <div class="bp-seg" id="bpTarget">
+                <button data-target="stroke" class="on">Trazo</button>
+                <button data-target="bg">Relleno</button>
+              </div>
+            </div>
+            <div class="bp-row"><div class="bp-grid6" id="bpColors"></div></div>
+            <div class="bp-row">
+              <span class="bp-label">Grosor</span>
+              <div class="bp-seg" id="bpWidth"></div>
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Estilo</span>
+              <div class="bp-seg" id="bpStyle"></div>
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Tipo de relleno</span>
+              <div class="bp-seg" id="bpFill"></div>
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Opacidad <b class="bp-val" id="bpOpacityVal">100%</b></span>
+              <input type="range" class="bp-range" id="bpOpacity" min="10" max="100" step="10" value="100">
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Bordes</span>
+              <div class="bp-seg" id="bpEdges">
+                <button data-v="sharp">Recto</button>
+                <button data-v="round">Redondo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Contenedor: Texto (Estilo oficial de Excalidraw) -->
+          <div id="bpTextProps" class="bp-panel-sub hidden">
+            <div class="bp-row">
+              <span class="bp-label">Trazo</span>
+              <div class="bp-grid6" id="bpTextColors"></div>
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Tipo de fuente</span>
+              <div class="bp-seg bp-font-seg" id="bpFontFamily">
+                <button data-ff="1" class="on" title="Manuscrita (Virgil)"><i class="ri-edit-2-line"></i></button>
+                <button data-ff="2" title="Normal (Sans)"><span class="bp-ficon sans">A</span></button>
+                <button data-ff="3" title="Código (Monospace)"><span class="bp-ficon mono">&lt;/&gt;</span></button>
+                <button data-ff="4" title="Serif"><span class="bp-ficon serif">𝔸</span></button>
+              </div>
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Tamaño de la fuente</span>
+              <div class="bp-seg bp-size-seg" id="bpFontSize">
+                <button data-fs="16" title="Pequeño (16px)">S</button>
+                <button data-fs="20" class="on" title="Mediano (20px)">M</button>
+                <button data-fs="28" title="Grande (28px)">L</button>
+                <button data-fs="36" title="Extra grande (36px)">XL</button>
+              </div>
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Alineado de texto</span>
+              <div class="bp-seg bp-align-seg" id="bpTextAlign">
+                <button data-ta="left" class="on" title="Alinear a la izquierda"><i class="ri-align-left"></i></button>
+                <button data-ta="center" title="Centrar"><i class="ri-align-center"></i></button>
+                <button data-ta="right" title="Alinear a la derecha"><i class="ri-align-right"></i></button>
+              </div>
+            </div>
+            <div class="bp-row">
+              <span class="bp-label">Opacidad <b class="bp-val" id="bpTextOpacityVal">100%</b></span>
+              <input type="range" class="bp-range" id="bpTextOpacity" min="10" max="100" step="10" value="100">
+            </div>
+          </div>
+
+          <!-- Contenedor común: Capas (visible para texto y formas) -->
+          <div class="bp-row bp-layers-row">
+            <span class="bp-label">Capas</span>
+            <div class="bp-seg bp-layers-seg" id="bpLayers">
+              <button data-layer="back" title="Enviar al fondo"><i class="ri-skip-down-line"></i></button>
+              <button data-layer="down" title="Enviar atrás"><i class="ri-arrow-down-line"></i></button>
+              <button data-layer="up" title="Traer adelante"><i class="ri-arrow-up-line"></i></button>
+              <button data-layer="front" title="Traer al frente"><i class="ri-skip-up-line"></i></button>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <!-- Lienzo central del tablero -->
+      <div class="board-canvas-wrap" id="boardCanvasWrap">
+        <button id="boardToolbarPill" class="board-toolbar-pill hidden" type="button" title="Mostrar barra de herramientas"><i class="ri-tools-line"></i> <span>Barra</span> <i class="ri-arrow-down-s-line"></i></button>
+        <div id="boardLoader" class="board-loader hidden">
+          <div class="loader"></div>
+          <p>Cargando el tablero… (primera vez descarga el editor)</p>
+        </div>
+        <div id="boardCanvas"></div>
+      </div>
+
+      <!-- Panel lateral DERECHO: Librería de figuras, símbolos y presets -->
+      <aside class="board-side board-side-right hidden" id="boardSideRight" aria-label="Librería y presets">
+        <section class="board-side-sec" id="boardPresets">
+          <div class="board-sec-head">
+            <b><i class="ri-layout-grid-line"></i> Librería</b>
+            <span class="row">
+              <button class="icon-btn tiny" id="boardLibImportBtn" title="Importar librería (.excalidrawlib)"><i class="ri-folder-add-line"></i></button>
+              <button class="icon-btn tiny" id="boardPresetAdd" title="Guardar selección como preset"><i class="ri-add-line"></i></button>
+              <button class="icon-btn tiny" id="boardPresetsClose" title="Cerrar"><i class="ri-close-line"></i></button>
+            </span>
+          </div>
+          <input type="file" id="boardLibImportInput" accept=".excalidrawlib,.json" hidden>
+          <div class="board-preset-new hidden" id="boardPresetNew">
+            <input type="text" id="boardPresetName" placeholder="Nombre del preset" maxlength="40">
+            <button class="btn btn-primary btn-sm" id="boardPresetSave">Guardar</button>
+            <button class="btn btn-ghost btn-sm" id="boardPresetCancel">Cancelar</button>
+          </div>
+          <!-- Filtro de Categorías y Buscador -->
+          <div class="board-lib-filter">
+            <div class="board-lib-tabs" id="boardLibTabs">
+              <button class="board-lib-chip on" data-lib="all">Todas</button>
+              <button class="board-lib-chip" data-lib="math">Símbolos</button>
+              <button class="board-lib-chip" data-lib="teacher">Geometría</button>
+              <button class="board-lib-chip" data-lib="econ">Economía</button>
+              <button class="board-lib-chip" data-lib="custom">Mis Presets</button>
+            </div>
+            <div class="board-lib-search-wrap">
+              <i class="ri-search-line"></i>
+              <input type="text" id="boardPresetSearch" class="board-lib-search" placeholder="Buscar símbolo o figura...">
+            </div>
+            <div class="board-lib-color-hint" id="boardLibColorHint" title="Los símbolos y figuras adoptan este color al insertarse">
+              <span class="board-lib-color-dot" id="boardLibColorDot"></span>
+              <span id="boardLibColorText">Color de trazo activo</span>
+            </div>
+          </div>
+          <p class="board-preset-hint">Arrastra al lienzo o haz clic para insertar.</p>
+          <div class="board-preset-grid" id="boardPresetGrid"></div>
+        </section>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LABORATORIOS ============ -->
+<section id="sec-laboratorios" class="page">
+  <div class="page-head">
+    <h1><i class="ri-flask-line accent"></i> <span data-scramble>Laboratorios</span></h1>
+    <p>Experimentos y herramientas de estudio. Repaso espaciado ya está listo; lo demás viene en camino.</p>
+  </div>
+  <div id="labsLanding">
+    <div class="cards-grid" id="labsGrid"></div>
+  </div>
+  <div class="lab-page hidden" id="labPage-repaso">
+    <div class="tool-page-head">
+      <a href="#/laboratorios" class="btn btn-ghost btn-sm"><i class="ri-arrow-left-line"></i> Laboratorios</a>
+      <h2><i class="ri-brain-line accent"></i> <span data-scramble>Repaso espaciado</span></h2>
+      <span class="badge">SM-2 · tarjetas · hoy</span>
+    </div>
+    <div class="tool-page-body" id="repasoBody"><i class="ri-loader-4-line spin"></i> Cargando…</div>
+  </div>
+</section>
+
+</main>
+
+<!-- Mini player fijo / segundo plano (z-70) -->
+<div id="miniPlayer" class="mini-player hidden" role="region" aria-label="Reproductor en segundo plano">
+  <div class="mp-disc" id="mpDisc" title="Música activa">
+    <i class="ri-disc-line"></i>
+  </div>
+  <div class="mp-info">
+    <div class="mp-meta">
+      <span id="mpTitle">—</span>
+      <span id="mpPl">—</span>
+    </div>
+    <div class="mp-progress-bar">
+      <div id="mpProgress" class="mp-progress-fill"></div>
+    </div>
+  </div>
+  <div class="mp-controls">
+    <button class="icon-btn mp-btn" id="mpPrev" title="Pista anterior"><i class="ri-skip-back-line"></i></button>
+    <button class="icon-btn mp-btn mp-play" id="mpPlay" title="Reproducir / Pausa"><i class="ri-play-fill"></i></button>
+    <button class="icon-btn mp-btn" id="mpNext" title="Pista siguiente"><i class="ri-skip-forward-line"></i></button>
+    <button class="icon-btn mp-close" id="mpClose" title="Ocultar reproductor"><i class="ri-close-line"></i></button>
+  </div>
+</div>
+
+<!-- Modal: evento/tarea -->
+<div id="eventModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="evTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2 id="evTitle">Nuevo evento</h2>
+      <button class="icon-btn" data-close="eventModal"><i class="ri-close-line"></i></button>
+    </div>
+    <form id="eventForm">
+      <label>Título <input type="text" id="evName" required></label>
+      <div class="row2">
+        <label>Fecha <input type="date" id="evDate" required></label>
+        <label class="check"><input type="checkbox" id="evAllDay"> Todo el día</label>
+      </div>
+      <div class="row2">
+        <label>Inicio <input type="time" id="evStart"></label>
+        <label>Fin <input type="time" id="evEnd"></label>
+      </div>
+      <div class="row2">
+        <label>Repetición
+          <select id="evRecur">
+            <option value="none">No se repite</option>
+            <option value="daily">Diaria</option>
+            <option value="weekly">Semanal</option>
+            <option value="monthly">Mensual</option>
+          </select>
+        </label>
+        <label>Categoría
+          <select id="evCat"></select>
+        </label>
+      </div>
+      <label>Notas <textarea id="evNotes" rows="2"></textarea></label>
+      <div class="modal-foot">
+        <button type="button" class="btn btn-danger-ghost btn-sm hidden" id="evDelete"><i class="ri-delete-bin-line"></i> Eliminar</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="eventModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="ri-check-line"></i> Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<!-- Modal: config agente -->
+<div id="chatConfigModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2><i class="ri-settings-3-line"></i> Configurar agente</h2>
+      <button class="icon-btn" data-close="chatConfigModal"><i class="ri-close-line"></i></button>
+    </div>
+    <form id="chatConfigForm">
+      <label>Proveedor
+        <select id="ccProvider">
+          <option value="autonomous">Parser autónomo local (predeterminado · sin dependencias)</option>
+          <option value="ollama">Ollama local (si está disponible)</option>
+          <option value="openai">OpenAI-compatible (endpoint personalizado)</option>
+        </select>
+      </label>
+      <label>Modelo
+        <select id="ccModel"></select>
+      </label>
+      <label class="hidden" id="ccUrlWrap">Base URL (OpenAI-compatible)
+        <input type="text" id="ccUrl" placeholder="http://localhost:11434/v1">
+      </label>
+      <label class="hidden" id="ccKeyWrap">API Key <small>(se guarda solo en tu navegador)</small>
+        <input type="password" id="ccKey" placeholder="sk-…">
+      </label>
+      <div class="modal-foot">
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="chatConfigModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="ri-check-line"></i> Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: plan de proyecto -->
+<div id="projectModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <div class="modal-head">
+      <h2><i class="ri-rocket-2-line"></i> Plan de proyecto</h2>
+      <button class="icon-btn" data-close="projectModal"><i class="ri-close-line"></i></button>
+    </div>
+    <form id="projectForm">
+      <label>Título del proyecto <input type="text" id="pjTitle" placeholder="Ej: Trabajo de investigación económica" required></label>
+      <label>Fecha límite <input type="date" id="pjDeadline" required></label>
+      <label>Contexto y requisitos <textarea id="pjContext" rows="4" placeholder="¿De qué trata? ¿Qué exige la guía? ¿Cuánto tiempo puedes dedicarle al día? Cuéntale todo lo que sepas." required></textarea></label>
+      <div class="modal-foot">
+        <span class="spacer"></span>
+        <button type="button" class="btn btn-ghost btn-sm" data-close="projectModal">Cancelar</button>
+        <button type="submit" class="btn btn-primary btn-sm"><i class="ri-magic-line"></i> Generar plan semanal</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<script type="module" src="js/main.js?v=20260921_appmode"></script>
+</body>
+</html>

@@ -1,0 +1,2747 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Tools | Ultimate Edition</title>
+
+    <!-- Fuentes e Iconos -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+
+    <!-- Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #ec4899;
+            --accent: #10b981;
+            --bg-body: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --nav-width: 280px;
+            --cursor-size: 20px;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+            cursor: none;
+            /* Custom cursor base */
+            transition: background-color 0.4s cubic-bezier(0.4, 0, 0.2, 1), color 0.4s ease;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* --- CUSTOM CURSOR --- */
+        #cursor-dot,
+        #cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        #cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary);
+        }
+
+        #cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--secondary);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        /* Scrollbar Personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary);
+        }
+
+        /* --- MAGNETIC BACKGROUND --- */
+        .magnetic-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            transition: transform 0.1s linear;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+        }
+
+        .blob-2 {
+            width: 300px;
+            height: 300px;
+            background: var(--secondary);
+            bottom: -50px;
+            right: -50px;
+        }
+
+        .blob-3 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent);
+            top: 40%;
+            left: 40%;
+            opacity: 0.4;
+        }
+
+        /* --- Layout --- */
+        nav {
+            width: var(--nav-width);
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            z-index: 10;
+        }
+
+        [data-theme="dark"] nav {
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        main {
+            flex: 1;
+            overflow-y: auto;
+            position: relative;
+            scroll-behavior: smooth;
+        }
+
+        /* --- Logo Mejorado --- */
+        .brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: -1px;
+        }
+
+        .brand i {
+            font-size: 2rem;
+            color: var(--primary);
+            -webkit-text-fill-color: initial;
+        }
+
+        /* --- Navegación --- */
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .nav-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 1rem;
+            text-align: left;
+            cursor: pointer;
+            border-radius: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 4px;
+            height: 0%;
+            background: var(--secondary);
+            transition: height 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            color: var(--text-main);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-btn:hover::before {
+            height: 70%;
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
+            color: var(--primary);
+        }
+
+        .nav-btn.active::before {
+            height: 70%;
+            background: var(--primary);
+        }
+
+        .nav-btn i {
+            font-size: 1.4rem;
+        }
+
+        /* --- Top Bar --- */
+        .top-bar {
+            padding: 2rem 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .theme-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-card);
+            color: var(--text-main);
+            font-size: 1.5rem;
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- Sections & Animation --- */
+        section {
+            display: none;
+            padding: 0 3rem 4rem 3rem;
+        }
+
+        section.active {
+            display: block;
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Scroll Reveal Classes */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* --- Landing Page Elements --- */
+        .hero-title {
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 2rem;
+            background: linear-gradient(to right, var(--text-main), var(--text-muted));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 2rem;
+        }
+
+        .floating-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transition: transform 0.5s;
+        }
+
+        .floating-img:hover {
+            transform: scale(1.02) rotate(1deg);
+        }
+
+        .feature-row {
+            display: flex;
+            align-items: center;
+            gap: 3rem;
+            margin: 6rem 0;
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease;
+        }
+
+        .feature-row:nth-child(even) {
+            flex-direction: row-reverse;
+            transform: translateX(50px);
+        }
+
+        .feature-row.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .feature-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* --- Cards General --- */
+        .card {
+            background: var(--bg-card);
+            padding: 2rem;
+            border-radius: 24px;
+            border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- Buttons --- */
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+            transition: transform 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            box-shadow: 0 10px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        /* --- Inputs --- */
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            color: var(--text-main);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            background: rgba(30, 41, 59, 0.5);
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            background: var(--bg-card);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        /* --- CALCULADORA MEJORADA --- */
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .calc-btn {
+            padding: 1.2rem;
+            border-radius: 16px;
+            border: none;
+            background: var(--bg-body);
+            color: var(--text-main);
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .calc-btn:hover {
+            background: var(--border);
+            transform: scale(1.05);
+        }
+
+        .calc-btn.op {
+            background: var(--primary);
+            color: white;
+        }
+
+        .calc-btn.op:hover {
+            background: var(--secondary);
+        }
+
+        .calc-btn.func {
+            color: var(--secondary);
+            font-size: 1rem;
+        }
+
+        #calc-display {
+            grid-column: span 5;
+            background: #0f172a;
+            color: #10b981;
+            padding: 1.5rem;
+            border-radius: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 2rem;
+            text-align: right;
+            margin-bottom: 1rem;
+            border: 2px solid var(--border);
+        }
+
+        /* --- 3D SECTION --- */
+        #canvas-container {
+            width: 100%;
+            height: 600px;
+            border-radius: 24px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+        }
+
+        #math-input {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            padding: 1rem;
+            border-radius: 50px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            z-index: 10;
+            text-align: center;
+        }
+
+        /* --- Library Items --- */
+        .concept-item {
+            background: var(--bg-card);
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            position: relative;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .delete-btn {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+            border: none;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+
+        /* --- Toast --- */
+        #toast-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 10000;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            animation: slideIn 0.3s ease;
+            border-left: 4px solid var(--primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* --- Responsive --- */
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 3.5rem;
+            }
+
+            .hero-grid,
+            .feature-row {
+                grid-template-columns: 1fr;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .feature-row:nth-child(even) {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                overflow-y: auto;
+                height: auto;
+            }
+
+            nav {
+                width: 100%;
+                height: auto;
+                padding: 1rem;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            /* Simplified for mobile demo */
+            .mobile-toggle {
+                display: block;
+                position: absolute;
+                right: 20px;
+                top: 20px;
+                font-size: 1.5rem;
+            }
+
+            /* EconGraphs Modern UI */
+            #econ-canvas-container {
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+            }
+
+            /* Modern Range Slider */
+            input[type=range] {
+                -webkit-appearance: none;
+                appearance: none;
+                width: 100%;
+                margin: 10px 0;
+                background: transparent;
+            }
+
+            input[type=range]:focus {
+                outline: none;
+            }
+
+            input[type=range]::-webkit-slider-runnable-track {
+                width: 100%;
+                height: 6px;
+                cursor: pointer;
+                background: var(--border);
+                border-radius: 3px;
+                transition: background 0.2s;
+            }
+
+            input[type=range]::-webkit-slider-thumb {
+                height: 20px;
+                width: 20px;
+                border-radius: 50%;
+                background: var(--primary);
+                cursor: pointer;
+                -webkit-appearance: none;
+                margin-top: -7px;
+                box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+                border: 2px solid var(--bg-main);
+                transition: transform 0.2s;
+            }
+
+            input[type=range]::-webkit-slider-thumb:hover {
+                transform: scale(1.2);
+            }
+
+            input[type=range]:active::-webkit-slider-thumb {
+                transform: scale(0.95);
+            }
+
+            /* Switch Toggle CSS */
+            .switch {
+                position: relative;
+                display: inline-block;
+                width: 50px;
+                height: 24px;
+            }
+
+            .switch input {
+                opacity: 0;
+                width: 0;
+                height: 0;
+            }
+
+            .slider {
+                position: absolute;
+                cursor: pointer;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: var(--border);
+                transition: .4s;
+                border-radius: 34px;
+            }
+
+            .slider:before {
+                position: absolute;
+                content: "";
+                height: 16px;
+                width: 16px;
+                left: 4px;
+                bottom: 4px;
+                background-color: white;
+                transition: .4s;
+                border-radius: 50%;
+            }
+
+            input:checked+.slider {
+                background-color: var(--primary);
+            }
+
+            input:checked+.slider:before {
+                transform: translateX(26px);
+            }
+
+            section {
+                padding: 2rem 1.5rem;
+            }
+
+            #cursor-dot,
+            #cursor-outline {
+                display: none;
+            }
+
+            /* Hide custom cursor on touch */
+            * {
+                cursor: auto;
+            }
+
+            /* GPA Mobile Fix */
+            .gpa-row {
+                grid-template-columns: 1fr !important;
+                gap: 0.5rem !important;
+                padding: 1rem;
+                background: var(--bg-card);
+                border-radius: 16px;
+                border: 1px solid var(--border);
+            }
+
+            .gpa-row input {
+                margin-bottom: 0;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Custom Cursor Elements -->
+    <div id="cursor-dot"></div>
+    <div id="cursor-outline"></div>
+
+    <!-- Magnetic Background -->
+    <div class="magnetic-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navegación -->
+    <nav>
+        <div class="brand">
+            <i class="ri-functions-of-x"></i> Academic Tools
+        </div>
+        <button class="mobile-toggle" onclick="toggleNav()"><i class="ri-menu-4-line"></i></button>
+        <ul class="nav-links" id="main-nav">
+            <li><button class="nav-btn active" onclick="navTo('home')" data-section="home"><i
+                        class="ri-home-smile-line"></i> Inicio</button></li>
+            <li><button class="nav-btn" onclick="navTo('scraping')" data-section="scraping"><i
+                        class="ri-search-eye-line"></i> Scraping</button></li>
+            <li><button class="nav-btn" onclick="navTo('gpa')" data-section="gpa"><i class="ri-medal-line"></i>
+                    Promedio</button></li>
+            <li><button class="nav-btn" onclick="navTo('calc')" data-section="calc"><i class="ri-calculator-line"></i>
+                    Calculadora Pro</button></li>
+            <li><button class="nav-btn" onclick="navTo('3d')" data-section="3d"><i class="ri-box-3-line"></i>
+                    Superficies 3D</button></li>
+            <li><button class="nav-btn" onclick="navTo('econ')" data-section="econ"><i class="ri-line-chart-line"></i>
+                    Economía</button></li>
+            <li><button class="nav-btn" onclick="navTo('lib')" data-section="lib"><i class="ri-book-read-line"></i>
+                    Biblioteca</button></li>
+            <li><button class="nav-btn" onclick="navTo('config')" data-section="config"><i
+                        class="ri-settings-4-line"></i> Configuración</button></li>
+        </ul>
+    </nav>
+
+    <!-- Contenido -->
+    <main id="main-scroll">
+        <div class="top-bar">
+            <h2 id="page-title" style="font-weight: 300;">Bienvenido</h2>
+            <button class="theme-btn" onclick="toggleTheme()"><i class="ri-moon-clear-line"
+                    id="theme-icon"></i></button>
+        </div>
+
+        <!-- SECCIÓN: HOME (LANDING PAGE) -->
+        <section id="home" class="active">
+            <div style="min-height: 80vh; padding-top: 2rem;">
+                <div class="hero-grid">
+                    <div class="reveal active">
+                        <h1 class="hero-title">Potencia tu <br><span style="color: var(--primary);">Intelecto</span>
+                        </h1>
+                        <p style="font-size: 1.5rem; color: var(--text-muted); margin-bottom: 2rem; max-width: 500px;">
+                            La suite definitiva para estudiantes modernos. Calculadoras avanzadas, visualización 3D y
+                            gestión de conocimiento en un solo lugar.
+                        </p>
+                        <button class="btn btn-secondary" onclick="navTo('calc')">Empezar a Calcular <i
+                                class="ri-arrow-right-line"></i></button>
+                    </div>
+                    <div class="reveal active" style="animation-delay: 0.2s;">
+                        <img src="https://images.unsplash.com/photo-1635070041078-e363dbe005cb?q=80&w=1000&auto=format&fit=crop"
+                            class="floating-img" alt="Math Abstract">
+                    </div>
+                </div>
+
+                <!-- Scroll Features -->
+                <div class="feature-row reveal-on-scroll">
+                    <div style="flex: 1;">
+                        <img src="https://images.unsplash.com/photo-1587620962725-abab7fe55159?q=80&w=1000&auto=format&fit=crop"
+                            class="floating-img" alt="Coding">
+                    </div>
+                    <div class="feature-text" style="flex: 1;">
+                        <h2>Calculadora Python</h2>
+                        <p style="font-size: 1.2rem; color: var(--text-muted); line-height: 1.6;">
+                            Evalúa expresiones complejas, factoriales, sumatorias y trigonometría instantánea. Diseñada
+                            para velocidad y precisión.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="feature-row reveal-on-scroll">
+                    <div style="flex: 1;">
+                        <img src="https://images.unsplash.com/photo-1509228468518-180dd4864904?q=80&w=1000&auto=format&fit=crop"
+                            class="floating-img" alt="3D Geometry">
+                    </div>
+                    <div class="feature-text" style="flex: 1;">
+                        <h2>Gráficos 3D Interactivos</h2>
+                        <p style="font-size: 1.2rem; color: var(--text-muted); line-height: 1.6;">
+                            Visualiza funciones matemáticas en tiempo real. Rota, zoom y escribe tus propias ecuaciones
+                            al estilo Geogebra.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: CALCULADORA PRO -->
+        <section id="calc">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Calculadora Científica</h1>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Soporta Factorial, Trigonométricas, Sumatorias y
+                más.</p>
+
+            <div style="max-width: 600px; margin: 0 auto;">
+                <div id="calc-display">0</div>
+                <div class="calc-grid">
+                    <!-- Funciones -->
+                    <button class="calc-btn func" onclick="addCalc('sin(')">sin</button>
+                    <button class="calc-btn func" onclick="addCalc('cos(')">cos</button>
+                    <button class="calc-btn func" onclick="addCalc('tan(')">tan</button>
+                    <button class="calc-btn func" onclick="addCalc('(')">(</button>
+                    <button class="calc-btn func" onclick="addCalc(')')">)</button>
+
+                    <button class="calc-btn func" onclick="addCalc('log(')">log</button>
+                    <button class="calc-btn func" onclick="addCalc('ln(')">ln</button>
+                    <button class="calc-btn func" onclick="addCalc('factorial(')">n!</button>
+                    <button class="calc-btn func" onclick="addCalc('sqrt(')">√</button>
+                    <button class="calc-btn func" onclick="addCalc('^')">^</button>
+
+                    <button class="calc-btn func" onclick="addCalc('sum(1,10,' )">∑</button>
+                    <button class="calc-btn" onclick="addCalc('7')">7</button>
+                    <button class="calc-btn" onclick="addCalc('8')">8</button>
+                    <button class="calc-btn" onclick="addCalc('9')">9</button>
+                    <button class="calc-btn op" onclick="addCalc('/')">÷</button>
+
+                    <button class="calc-btn" onclick="addCalc('4')">4</button>
+                    <button class="calc-btn" onclick="addCalc('5')">5</button>
+                    <button class="calc-btn" onclick="addCalc('6')">6</button>
+                    <button class="calc-btn op" onclick="addCalc('*')">×</button>
+
+                    <button class="calc-btn" onclick="addCalc('1')">1</button>
+                    <button class="calc-btn" onclick="addCalc('2')">2</button>
+                    <button class="calc-btn" onclick="addCalc('3')">3</button>
+                    <button class="calc-btn op" onclick="addCalc('-')">-</button>
+
+                    <button class="calc-btn" onclick="addCalc('0')">0</button>
+                    <button class="calc-btn" onclick="addCalc('.')">.</button>
+                    <button class="calc-btn op" onclick="calcClear()">AC</button>
+                    <button class="calc-btn op" onclick="addCalc('+')">+</button>
+
+                    <button class="calc-btn op"
+                        style="grid-column: span 5; background: var(--secondary); font-size: 1.5rem;"
+                        onclick="evalCalc()">=</button>
+                </div>
+                <p style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;">* La suma (Σ) requiere
+                    formato: sum(inicio, fin, i) ej: sum(1, 5, i)</p>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: 3D CUSTOM -->
+        <section id="3d">
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h1 style="font-size: 3rem;">Laboratorio de Superficies</h1>
+                <p>Escribe tu función z = f(x, y)</p>
+            </div>
+
+            <div id="canvas-container">
+                <input type="text" id="math-input" value="sin(x) * cos(y)" placeholder="Ej: x*x + y*y">
+                <div
+                    style="position: absolute; bottom: 20px; left: 20px; color: white; background: rgba(0,0,0,0.5); padding: 10px; border-radius: 10px;">
+                    <small>Soporta: sin, cos, tan, log, sqrt, ^, PI</small>
+                </div>
+            </div>
+            <div style="margin-top: 1rem; text-align: center;">
+                <button class="btn" onclick="updateCustomGraph()">Graficar</button>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: BIBLIOTECA -->
+        <section id="lib">
+            <h1 style="font-size: 3rem;">Biblioteca de Conocimiento</h1>
+            <div
+                style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                <!-- Formulario -->
+                <div class="card">
+                    <h3><i class="ri-add-circle-line"></i> Nuevo Concepto</h3>
+                    <input type="text" id="lib-title" placeholder="Título">
+                    <input type="text" id="lib-cat" placeholder="Categoría">
+                    <textarea id="lib-content" rows="5" placeholder="Descripción o Fórmula..."
+                        style="width:100%; padding:1rem; border-radius:12px; border:2px solid var(--border); background:var(--bg-card); color:var(--text-main); margin-bottom:1rem;"></textarea>
+                    <button class="btn" style="width: 100%;" onclick="addConcept()">Guardar</button>
+                </div>
+
+                <!-- Lista -->
+                <div style="grid-column: span 2;">
+                    <div id="lib-list">
+                        <!-- Items generados por JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: GPA (Gestor de Materias) -->
+        <section id="gpa">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Gestor de Materias</h1>
+            <p style="color:var(--text-muted); margin-bottom: 2rem;">Seguimiento detallado de tu rendimiento académico.
+            </p>
+
+            <!-- VISTA PRINCIPAL: LISTA DE MATERIAS -->
+            <div id="gpa-main-view">
+                <!-- Semester Controls -->
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem; overflow-x: auto; padding-bottom: 0.5rem;"
+                    id="semester-controls">
+                    <!-- Rendered JS -->
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <button class="btn" onclick="addSubjectPrompt()"><i class="ri-add-line"></i> Nueva Materia</button>
+                    <div style="text-align: right;">
+                        <div
+                            style="background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid var(--border); display: inline-block;">
+                            <small style="color: var(--text-muted); display: block;">Promedio Semestre</small>
+                            <strong id="semester-gpa" style="color: var(--primary); font-size: 1.2rem;">0.00</strong>
+                        </div>
+                        <div
+                            style="background: var(--bg-card); padding: 0.5rem 1rem; border-radius: 12px; border: 1px solid var(--border); display: inline-block; margin-left: 0.5rem;">
+                            <small style="color: var(--text-muted); display: block;">Promedio Global (Ponderado)</small>
+                            <strong id="global-gpa" style="color: var(--secondary); font-size: 1.2rem;">0.00</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="subjects-grid" class="hero-grid"
+                    style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; margin-top: 0;">
+                    <!-- Subjects Rendered Here -->
+                </div>
+            </div>
+
+            <!-- VISTA DETALLE: MATERIA ESPECÍFICA -->
+            <div id="gpa-detail-view" style="display: none; flex-direction: column;">
+                <button class="btn btn-secondary" onclick="closeSubjectDetail()"
+                    style="width: fit-content; margin-bottom: 1rem;">
+                    <i class="ri-arrow-left-line"></i> Volver
+                </button>
+
+                <div class="card" style="position: relative;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem;">
+                        <div>
+                            <h2 id="detail-name"
+                                style="font-size: 2.5rem; color: var(--primary); margin-bottom: 0.5rem;">Materia</h2>
+                            <p style="color: var(--text-muted);">
+                                Acumulado: <strong id="detail-accum"
+                                    style="color: var(--text-main); font-size: 1.2rem;">0.00</strong>
+                                <span style="margin: 0 0.5rem;">|</span>
+                                Progreso: <strong id="detail-progress">0%</strong>
+                            </p>
+                        </div>
+                        <button class="btn" onclick="calcRequirementPrompt()" style="background: var(--accent);"><i
+                                class="ri-calculator-line"></i> Calcular Requisito</button>
+                    </div>
+
+                    <h3 style="margin-bottom: 1rem;">Notas Parciales</h3>
+                    <div id="grades-list"
+                        style="display: flex; flex-direction: column; gap: 0.8rem; margin-bottom: 2rem;">
+                        <!-- Grades Rendered Here -->
+                    </div>
+
+                    <div
+                        style="background: var(--bg-body); padding: 1.5rem; border-radius: 16px; border: 1px solid var(--border); display: flex; gap: 1rem; align-items: end;">
+                        <div style="flex: 1;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Nota (0.0 -
+                                5.0)</label>
+                            <input type="number" id="new-grade-val" step="0.1" min="0" max="5" placeholder="Ej: 4.5"
+                                style="margin-bottom: 0;">
+                        </div>
+                        <div style="flex: 1;">
+                            <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Peso
+                                (%)</label>
+                            <input type="number" id="new-grade-weight" step="1" min="1" max="100" placeholder="Ej: 30"
+                                style="margin-bottom: 0;">
+                        </div>
+                        <button class="btn" onclick="addGradeFromInput()" style="height: 52px;"><i
+                                class="ri-add-circle-line"></i> Agregar</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: ECONOMÍA (Interés Compuesto) -->
+        <section id="econ">
+            <div id="econ-main-view">
+                <p style="color:var(--text-muted); margin-bottom: 2rem;">Conceptos económicos interactivos y visuales.
+                </p>
+                <div id="econ-grid" class="econ-grid">
+                    <!-- Categories rendered via JS -->
+                </div>
+            </div>
+
+            <div id="econ-detail-view" style="display: none; height: 100%; display: flex; flex-direction: column;">
+                <button class="btn btn-secondary" onclick="closeEconDetail()"
+                    style="width: fit-content; margin-bottom: 1rem;"><i class="ri-arrow-left-line"></i> Volver a
+                    Temas</button>
+                <div style="display: flex; gap: 2rem; flex: 1; height: 100%;">
+                    <!-- Sidebar Topics -->
+                    <div
+                        style="width: 250px; border-right: 1px solid var(--border); padding-right: 1rem; overflow-y: auto;">
+                        <h3 id="econ-cat-title" style="color: var(--primary); margin-bottom: 1rem;">Categoría</h3>
+                        <ul id="econ-topic-list" class="nav-links" style="display: block;">
+                            <!-- Topics -->
+                        </ul>
+                    </div>
+                    <!-- Main Content -->
+                    <div style="flex: 1; overflow-y: auto;">
+                        <h2 id="econ-topic-title" style="margin-bottom: 1rem;">Selecciona un tema</h2>
+                        <div id="econ-canvas-container"
+                            style="width: 100%; height: 400px; background: var(--bg-card); border-radius: 16px; position: relative; margin-bottom: 1rem; border: 1px solid var(--border);">
+                            <canvas id="econ-canvas" style="width: 100%; height: 100%;"></canvas>
+                            <!-- Controls overlay -->
+                            <div id="econ-controls"
+                                style="position: absolute; bottom: 10px; left: 10px; background: rgba(255,255,255,0.8); padding: 10px; border-radius: 8px; display: none;">
+                                <!-- Controls rendered via JS -->
+                            </div>
+                        </div>
+                        <div id="econ-explanation" style="line-height: 1.6; color: var(--text-main);">
+                            <!-- Text content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SECCIÓN: SCRAPING (Buscador Académico) -->
+        <section id="scraping">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Buscador Académico</h1>
+            <p style="color:var(--text-muted); margin-bottom: 2rem;">Busca papers y artículos en múltiples fuentes.</p>
+
+            <div class="card" style="margin-bottom: 2rem;">
+                <div style="display: flex; gap: 1rem;">
+                    <input type="text" id="search-query" placeholder="Buscar en arXiv, DOAJ, OpenAlex..."
+                        style="margin-bottom: 0;">
+                    <button class="btn" onclick="startOnlineSearch()"><i class="ri-search-line"></i> Buscar</button>
+                </div>
+                <div id="search-status" style="margin-top: 1rem; color: var(--text-muted); font-size: 0.9rem;"></div>
+                <div id="search-results"
+                    style="margin-top: 1.5rem; display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                    <!-- Resultados de búsqueda -->
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN: CONFIGURACIÓN -->
+        <section id="config">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">Configuración de Fuentes</h1>
+            <p style="color:var(--text-muted); margin-bottom: 2rem;">Gestiona los repositorios académicos activos.</p>
+
+            <div class="card">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="text-align: left; border-bottom: 2px solid var(--border);">
+                            <th style="padding: 1rem;">Fuente</th>
+                            <th style="padding: 1rem;">Tipo</th>
+                            <th style="padding: 1rem;">Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="config-repos-list">
+                        <!-- Repos cargados vía JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="toast-container"></div>
+
+    <script>
+        // --- CURSOR MAGNÉTICO ---
+        const cursorDot = document.getElementById('cursor-dot');
+        const cursorOutline = document.getElementById('cursor-outline');
+
+        window.addEventListener('mousemove', (e) => {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            // Dot sigue instantáneo
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Outline con delay (animado via CSS transition, solo movemos posición)
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+
+            // Efecto magnético en blobs de fondo
+            moveBlobs(posX, posY);
+        });
+
+        // Efecto hover al hacer click
+        window.addEventListener('mousedown', () => {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(0.8)';
+        });
+        window.addEventListener('mouseup', () => {
+            cursorOutline.style.transform = 'translate(-50%, -50%) scale(1)';
+        });
+
+        function moveBlobs(x, y) {
+            const blobs = document.querySelectorAll('.blob');
+            blobs.forEach((blob, index) => {
+                const speed = (index + 1) * 20;
+                const xMove = (window.innerWidth / 2 - x) / speed;
+                const yMove = (window.innerHeight / 2 - y) / speed;
+                blob.style.transform = `translate(${xMove}px, ${yMove}px)`;
+            });
+        }
+
+        // --- SCROLL REVEAL ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal-on-scroll, .reveal').forEach(el => observer.observe(el));
+
+        // --- NAVEGACIÓN ---
+        function navTo(sectionId) {
+            // Ocultar todas
+            document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+
+            // Actualizar Título
+            const titles = {
+                'home': 'Bienvenido',
+                'scraping': 'Scraping Académico',
+                'gpa': 'Calculadora de Promedio',
+                'calc': 'Calculadora Científica',
+                '3d': 'Laboratorio de Superficies',
+                'econ': 'Finanzas Académicas',
+                'lib': 'Biblioteca y Búsqueda',
+                'config': 'Configuración'
+            };
+            document.getElementById('page-title').innerText = titles[sectionId] || 'Academic Tools';
+
+            if (sectionId === 'config') {
+                loadConfig();
+            }
+
+            // Actualizar menú
+            const navButtons = document.querySelectorAll('.nav-btn');
+            navButtons.forEach(b => {
+                if (b.getAttribute('data-section') === sectionId) {
+                    b.classList.add('active');
+                } else {
+                    b.classList.remove('active');
+                }
+            });
+
+            // Cerrar menú móvil si está abierto
+            if (window.innerWidth <= 768) {
+                document.getElementById('main-nav').style.display = 'none';
+            }
+
+            // Scroll top
+            document.getElementById('main-scroll').scrollTop = 0;
+
+            // Si es 3D, resize
+            if (sectionId === '3d') setTimeout(onWindowResize, 100);
+        }
+
+        function toggleNav() {
+            const links = document.getElementById('main-nav');
+            links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+        }
+
+        // --- TEMA OSCURO ---
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                icon.className = 'ri-moon-clear-line';
+                update3DBackground('#f8fafc'); // Light bg for canvas
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                icon.className = 'ri-sun-line';
+                update3DBackground('#0f172a'); // Dark bg for canvas
+            }
+        }
+
+        // --- CALCULADORA PRO ---
+        let expr = "";
+
+        function addCalc(val) {
+            if (expr === "0") expr = "";
+            expr += val;
+            document.getElementById('calc-display').innerText = expr;
+        }
+
+        function calcClear() {
+            expr = "";
+            document.getElementById('calc-display').innerText = "0";
+        }
+
+        function factorial(n) {
+            if (n < 0) return NaN;
+            if (n === 0 || n === 1) return 1;
+            let result = 1;
+            for (let i = 2; i <= n; i++) result *= i;
+            return result;
+        }
+
+        function sum(start, end, term) {
+            // term is a string like 'i' or 'i*i'
+            let total = 0;
+            // Usamos Function constructor para evaluar el término
+            // Prevenimos inyección simple restringiendo el contexto, pero aquí es cliente
+            const f = new Function('i', `return ${term};`);
+            for (let i = start; i <= end; i++) {
+                total += f(i);
+            }
+            return total;
+        }
+
+        function evalCalc() {
+            try {
+                // Pre-procesar la cadena para que sea JS válido
+                let safeExpr = expr
+                    .replace(/sin/g, 'Math.sin')
+                    .replace(/cos/g, 'Math.cos')
+                    .replace(/tan/g, 'Math.tan')
+                    .replace(/log/g, 'Math.log10')
+                    .replace(/ln/g, 'Math.log')
+                    .replace(/sqrt/g, 'Math.sqrt')
+                    .replace(/\^/g, '**')
+                    .replace(/PI/g, 'Math.PI')
+                    .replace(/factorial\(/g, 'factorial(')
+                    .replace(/sum\(/g, 'sum(');
+
+                // Evaluar
+                const result = new Function('return ' + safeExpr)();
+
+                if (isNaN(result) || !isFinite(result)) throw "Error";
+
+                document.getElementById('calc-display').innerText = result;
+                showToast(`Resultado: ${result}`);
+                expr = result.toString();
+            } catch (e) {
+                document.getElementById('calc-display').innerText = "Error";
+                showToast("Expresión inválida", "error");
+                expr = "";
+            }
+        }
+
+        // --- 3D SURFACES (GEOGEBRA STYLE) ---
+        let scene, camera, renderer, mesh, controls;
+
+        function init3D() {
+            const container = document.getElementById('canvas-container');
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xffffff); // Default light
+
+            camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 100);
+            camera.position.set(10, 10, 10);
+            camera.lookAt(0, 0, 0);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            // Grid
+            const gridHelper = new THREE.GridHelper(20, 20, 0x000000, 0xdddddd);
+            scene.add(gridHelper);
+            // Axes
+            const axesHelper = new THREE.AxesHelper(5);
+            scene.add(axesHelper);
+
+            // Input Listener
+            document.getElementById('math-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') updateCustomGraph();
+            });
+
+            animate3D();
+        }
+
+        function updateCustomGraph() {
+            const inputStr = document.getElementById('math-input').value;
+            if (!inputStr) return;
+
+            if (mesh) scene.remove(mesh);
+
+            // Crear geometría plana
+            const geometry = new THREE.PlaneGeometry(10, 10, 60, 60);
+            const material = new THREE.MeshNormalMaterial({
+                side: THREE.DoubleSide,
+                wireframe: false
+            });
+            mesh = new THREE.Mesh(geometry, material);
+            mesh.rotation.x = -Math.PI / 2; // Acostar el plano
+            scene.add(mesh);
+
+            // Preparar función segura
+            // Reemplazos comunes para facilitar escritura al usuario
+            let safeFunc = inputStr
+                .replace(/sin/g, 'Math.sin')
+                .replace(/cos/g, 'Math.cos')
+                .replace(/tan/g, 'Math.tan')
+                .replace(/sqrt/g, 'Math.sqrt')
+                .replace(/\^/g, '**')
+                .replace(/PI/g, 'Math.PI');
+
+            // Crear función ejecutable f(x,y)
+            let f;
+            try {
+                f = new Function('x', 'y', `try { return ${safeFunc}; } catch(e) { return 0; }`);
+            } catch (e) {
+                showToast("Error en la fórmula", "error");
+                return;
+            }
+
+            const count = geometry.attributes.position.count;
+            const positions = geometry.attributes.position;
+
+            for (let i = 0; i < count; i++) {
+                const x = positions.getX(i);
+                const z_original = positions.getY(i); // En PlaneGeometry, Y es profundidad local, rotamos luego
+
+                // Evaluamos Z (altura) basado en X y la Y original (que luego será Z en mundo)
+                let zVal = f(x, z_original);
+
+                if (isNaN(zVal) || !isFinite(zVal)) zVal = 0;
+
+                // Modificar la posición Z (que localmente es "arriba" del plano antes de rotar)
+                positions.setZ(i, zVal);
+            }
+
+            geometry.computeVertexNormals();
+            geometry.attributes.position.needsUpdate = true;
+
+            showToast("Superficie actualizada");
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            if (!camera || !renderer) return;
+            const container = document.getElementById('canvas-container');
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function update3DBackground(colorHex) {
+            if (scene) scene.background = new THREE.Color(colorHex);
+        }
+
+        window.addEventListener('resize', onWindowResize);
+
+        // --- BIBLIOTECA (Fixed Delete) ---
+        const libList = document.getElementById('lib-list');
+        let concepts = JSON.parse(localStorage.getItem('at_lib_v2') || '[]');
+
+        function renderLib() {
+            libList.innerHTML = '';
+            concepts.forEach((item, index) => {
+                const el = document.createElement('div');
+                el.className = 'concept-item';
+                el.innerHTML = `
+                    <div>
+                        <h4 style="color:var(--primary); font-size:1.1rem;">${item.title} <span style="font-size:0.8rem; background:var(--border); padding:2px 8px; border-radius:10px; color:var(--text-muted);">${item.cat}</span></h4>
+                        <p style="color:var(--text-main); margin-top:0.5rem; white-space:pre-wrap;">${item.content}</p>
+                    </div>
+                    <button class="delete-btn" data-index="${index}"><i class="ri-delete-bin-line"></i></button>
+                `;
+                libList.appendChild(el);
+            });
+        }
+
+        // Event Delegation para el botón eliminar (Solución al bug)
+        libList.addEventListener('click', (e) => {
+            const btn = e.target.closest('.delete-btn');
+            if (btn) {
+                const index = btn.getAttribute('data-index');
+                concepts.splice(index, 1);
+                localStorage.setItem('at_lib_v2', JSON.stringify(concepts));
+                renderLib();
+                showToast("Concepto eliminado");
+            }
+        });
+
+        function addConcept() {
+            const title = document.getElementById('lib-title').value;
+            const cat = document.getElementById('lib-cat').value;
+            const content = document.getElementById('lib-content').value;
+
+            if (!title || !content) return showToast("Completa los campos", "error");
+
+            concepts.unshift({ title, cat, content });
+            localStorage.setItem('at_lib_v2', JSON.stringify(concepts));
+            renderLib();
+
+            // Limpiar
+            document.getElementById('lib-title').value = '';
+            document.getElementById('lib-content').value = '';
+            showToast("Guardado correctamente");
+        }
+
+        function showToast(msg, type = "success") {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.style.borderLeftColor = type === 'error' ? '#ef4444' : '#10b981';
+            t.innerHTML = `<span>${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => {
+                t.style.opacity = '0';
+                setTimeout(() => t.remove(), 300);
+            }, 3000);
+        }
+
+        // --- ONLINE SEARCH LOGIC ---
+        const API_BASE = "http://localhost:8000/api/v1";
+        let searchInterval = null;
+
+        async function startOnlineSearch() {
+            const query = document.getElementById('search-query').value;
+            if (!query) return showToast("Ingresa un término", "error");
+
+            document.getElementById('search-status').innerText = "Iniciando búsqueda...";
+            document.getElementById('search-results').innerHTML = '';
+
+            try {
+                const resp = await fetch(`${API_BASE}/search?query=${encodeURIComponent(query)}`, { method: 'POST' });
+                const data = await resp.json();
+                const jobId = data.job_id;
+
+                showToast("Búsqueda enviada al servidor");
+
+                // Poll for results
+                if (searchInterval) clearInterval(searchInterval);
+                searchInterval = setInterval(() => checkSearchStatus(jobId), 2000);
+            } catch (e) {
+                console.error(e);
+                showToast("Error conectando con el backend", "error");
+                document.getElementById('search-status').innerText = "Backend no disponible (Asegúrate de que corra en localhost:8000)";
+            }
+        }
+
+        async function checkSearchStatus(jobId) {
+            try {
+                const resp = await fetch(`${API_BASE}/search/${jobId}`);
+                if (!resp.ok) throw new Error("Network response was not ok");
+                const data = await resp.json();
+
+                document.getElementById('search-status').innerText = `Estado: ${data.job.status}... ${data.results.length} resultados encontrados.`;
+
+                if (data.job.status === 'completed' || data.job.status === 'failed') {
+                    clearInterval(searchInterval);
+                    renderSearchResults(data.results);
+                    if (data.results.length === 0) {
+                        document.getElementById('search-status').innerText = "No se encontraron resultados.";
+                    }
+                }
+            } catch (e) {
+                // Keep trying if it's a network glitch, but stop if 404
+                // or just log
+                console.log("Polling error", e);
+            }
+        }
+
+        function renderSearchResults(results) {
+            const container = document.getElementById('search-results');
+            container.innerHTML = '';
+            results.forEach(doc => {
+                const el = document.createElement('div');
+                el.className = 'concept-item';
+                el.style.borderLeft = '4px solid var(--accent)';
+                el.innerHTML = `
+                    <div style="flex:1">
+                        <small style="color:var(--primary)">${doc.source}</small>
+                        <h4 style="margin:0.2rem 0">${doc.title}</h4>
+                        <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:0.5rem;">${doc.authors || 'Autor desconocido'}</p>
+                        <a href="${doc.url}" target="_blank" style="font-size:0.8rem; color:var(--primary); text-decoration:none;"><i class="ri-external-link-line"></i> Ver documento</a>
+                    </div>
+                `;
+                container.appendChild(el);
+            });
+        }
+
+        // --- CONFIG LOGIC ---
+        async function loadConfig() {
+            const list = document.getElementById('config-repos-list');
+            list.innerHTML = '<tr><td colspan="3" style="padding:1rem;">Cargando...</td></tr>';
+
+            try {
+                const resp = await fetch(`${API_BASE}/repos`);
+                const repos = await resp.json();
+
+                list.innerHTML = '';
+                repos.forEach((repo, index) => {
+                    const tr = document.createElement('tr');
+                    tr.style.borderBottom = '1px solid var(--border)';
+                    tr.innerHTML = `
+                        <td style="padding: 1rem; font-weight:600;">${repo.name} <br> <small style="color:var(--text-muted); font-weight:400; font-size:0.8rem;">${repo.base_url}</small></td>
+                        <td style="padding: 1rem;">${repo.source_type}</td>
+                        <td style="padding: 1rem;">
+                            <label class="switch">
+                                <input type="checkbox" ${repo.enabled ? 'checked' : ''} onchange="toggleRepo('${repo.name}', this.checked, ${index})">
+                                <span class="slider round"></span>
+                            </label>
+                        </td>
+                    `;
+                    list.appendChild(tr);
+                });
+            } catch (e) {
+                console.error(e);
+                list.innerHTML = '<tr><td colspan="3" style="padding:1rem; color: #ef4444;">Error cargando configuración</td></tr>';
+            }
+        }
+
+        window.toggleRepo = async (name, enabled, index) => {
+            // Optimistic update implied by checkbox change, but we need to send to backend
+            // We need the full repo object, but endpoint typically accepts what's needed.
+            // For simplicity, we re-fetch to get full object or construct a minimal one if backend supports it.
+            // The backend endpoint expects a whole Repository object.
+
+            try {
+                // Fetch current list to get the object
+                const resp = await fetch(`${API_BASE}/repos`);
+                const repos = await resp.json();
+                const repo = repos.find(r => r.name === name);
+
+                if (repo) {
+                    repo.enabled = enabled;
+                    await fetch(`${API_BASE}/repos`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(repo)
+                    });
+                    showToast(`Repositorio ${enabled ? 'activado' : 'desactivado'}`);
+                }
+            } catch (e) {
+                showToast("Error actualizando repositorio", "error");
+                // Refresh list to undo
+                loadConfig();
+            }
+        };
+
+        // --- GPA MANAGER LOGIC (V3 - SEMESTERS & CREDITS) ---
+
+        let gpaData = { semesters: [], selectedSemesterId: null };
+
+        // Migration & Init
+        function initGPA() {
+            const v3 = localStorage.getItem('at_gpa_v3');
+            if (v3) {
+                gpaData = JSON.parse(v3);
+            } else {
+                // Check v2
+                const v2 = localStorage.getItem('at_gpa_v2');
+                const oldSubjects = v2 ? JSON.parse(v2) : [];
+
+                // Migrate or Init
+                const semId = 's_' + Date.now();
+                gpaData = {
+                    semesters: [
+                        {
+                            id: semId,
+                            name: oldSubjects.length > 0 ? "Semestre 0 (Migrado)" : "Semestre 1",
+                            subjects: oldSubjects.map(s => ({ ...s, credits: 3 })) // Default 3 credits for migrated
+                        }
+                    ],
+                    selectedSemesterId: semId
+                };
+                saveGPA();
+            }
+            renderGPA();
+        }
+
+        function saveGPA() {
+            localStorage.setItem('at_gpa_v3', JSON.stringify(gpaData));
+            updateGlobalStats();
+        }
+
+        function renderGPA() {
+            renderSemesterControls();
+            renderSubjectList();
+            updateGlobalStats();
+        }
+
+        // --- SEMESTER UI ---
+        function renderSemesterControls() {
+            const container = document.getElementById('semester-controls');
+            container.innerHTML = '';
+
+            gpaData.semesters.forEach(sem => {
+                const isSelected = sem.id === gpaData.selectedSemesterId;
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.style.background = isSelected ? 'var(--primary)' : 'var(--bg-card)';
+                btn.style.color = isSelected ? '#fff' : 'var(--text-main)';
+                btn.style.border = '1px solid var(--border)';
+                btn.style.whiteSpace = 'nowrap';
+
+                // Name + Edit on double click? Or just simple for now.
+                // Let's make it simple: Title.
+                btn.innerText = sem.name;
+                btn.onclick = () => {
+                    gpaData.selectedSemesterId = sem.id;
+                    saveGPA();
+                    renderGPA();
+                };
+
+                // Allow rename on right click
+                btn.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    const newName = prompt("Nuevo nombre del semestre:", sem.name);
+                    if (newName) {
+                        sem.name = newName;
+                        saveGPA();
+                        renderGPA();
+                    }
+                };
+
+                container.appendChild(btn);
+            });
+
+            // Add Semester Button
+            const addBtn = document.createElement('button');
+            addBtn.className = 'btn btn-secondary';
+            addBtn.innerHTML = '<i class="ri-add-line"></i>';
+            addBtn.title = "Nuevo Semestre";
+            addBtn.onclick = () => {
+                const name = prompt("Nombre del nuevo semestre:", `Semestre ${gpaData.semesters.length + 1}`);
+                if (name) {
+                    const newId = 's_' + Date.now();
+                    gpaData.semesters.push({ id: newId, name: name, subjects: [] });
+                    gpaData.selectedSemesterId = newId;
+                    saveGPA();
+                    renderGPA();
+                }
+            };
+            container.appendChild(addBtn);
+        }
+
+        // --- SUBJECT LIST ---
+        function renderSubjectList() {
+            const grid = document.getElementById('subjects-grid');
+            grid.innerHTML = '';
+
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            if (!currentSem) return;
+
+            // Calc Semester Average Here just for display
+            const semStats = calculateSemesterStats(currentSem);
+            document.getElementById('semester-gpa').innerText = semStats.average.toFixed(2);
+
+            currentSem.subjects.forEach(sub => {
+                const stats = calculateSubjectStats(sub);
+                const isPassing = stats.average >= 3.0; // Assuming 3.0 pass
+
+                const el = document.createElement('div');
+                el.className = 'card';
+                el.style.position = 'relative';
+                el.style.transition = 'transform 0.2s';
+                el.onmouseover = () => el.style.transform = 'translateY(-5px)';
+                el.onmouseout = () => el.style.transform = 'translateY(0)';
+
+                el.innerHTML = `
+                    <div style="position: absolute; top: 1rem; right: 1rem;">
+                        <button class="delete-btn" onclick="deleteSubject('${sub.id}', event)"><i class="ri-delete-bin-line"></i></button>
+                    </div>
+                    <div onclick="openSubjectDetail('${sub.id}')" style="cursor: pointer;">
+                        <div style="display:flex; justify-content:space-between; align-items:start">
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem; padding-right: 2rem;">
+                                ${sub.name}
+                                <button class="btn-sm" style="background:transparent; border:none; color:var(--text-muted); cursor:pointer;" onclick="editSubject('${sub.id}', event)" title="Editar">
+                                    <i class="ri-pencil-line"></i>
+                                </button>
+                            </h3>
+                            <span style="font-size:0.8rem; background:var(--bg-body); padding:2px 6px; border-radius:4px; border:1px solid var(--border);">${sub.credits || 3} Cr</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem;">
+                            <div>
+                                <small style="display: block; color: var(--text-muted);">Notas</small>
+                                <span style="font-size: 1.2rem; font-weight: 600;">${sub.grades.length}</span>
+                            </div>
+                            <div style="text-align: right;">
+                                <small style="display: block; color: var(--text-muted);">Definitiva</small>
+                                <span style="font-size: 1.5rem; font-weight: 800; color: ${isPassing ? '#10b981' : '#ef4444'};">
+                                    ${isNaN(stats.weightedAvg) ? 'NA' : stats.weightedAvg.toFixed(2)}
+                                </span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 1rem; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden;">
+                            <div style="height: 100%; width: ${stats.totalWeight}%; background: var(--secondary);"></div>
+                        </div>
+                        <small style="color: var(--text-muted); display: block; margin-top: 0.5rem; text-align: right;">${stats.totalWeight}% completado</small>
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+        }
+
+        function calculateSubjectStats(sub) {
+            let totalWeight = 0;
+            let totalPoints = 0;
+            sub.grades.forEach(g => {
+                totalWeight += g.weight;
+                totalPoints += g.value * (g.weight / 100);
+            });
+
+            // For subject internal calculation:
+            // "Accumulated" = Direct Sum of points (e.g. 2.62)
+            // But for Semester Calculation, we need the "Projected Final Grade" if weight < 100?
+            // Usually, semester average assumes the grade you currently have IS the grade, or projected?
+            // Standard: Current Semester Average = Sum(CurrentSubjectGrade * Credits) / Sum(Credits)
+            // Where CurrentSubjectGrade is usually the projected one if unfinished, or accumulated?
+            // Let's use Projected: If I have 5.0 in 10%, my grade is 5.0 so far.
+
+            const projectedAvg = totalWeight > 0 ? (totalPoints / (totalWeight / 100)) : 0;
+
+            return {
+                totalWeight,
+                totalPoints, // Absolute accumulated
+                average: totalPoints, // For display "Accumulated"
+                weightedAvg: totalPoints,
+                projectedAvg: projectedAvg // For Semester/Global stats
+            };
+        }
+
+        function calculateSemesterStats(semester) {
+            let totalCredits = 0;
+            let weightedSum = 0;
+
+            semester.subjects.forEach(sub => {
+                const stats = calculateSubjectStats(sub);
+                const credits = parseFloat(sub.credits || 3);
+                // Only count if subject has at least some grade? Or always count as 0?
+                // Typically always count. If no grades, 0.
+                if (stats.totalWeight > 0) {
+                    weightedSum += stats.projectedAvg * credits;
+                    totalCredits += credits;
+                }
+            });
+
+            return {
+                average: totalCredits > 0 ? weightedSum / totalCredits : 0,
+                totalCredits
+            };
+        }
+
+        function updateGlobalStats() {
+            let totalCredits = 0;
+            let weightedSum = 0;
+
+            gpaData.semesters.forEach(sem => {
+                const semStats = calculateSemesterStats(sem);
+                // We use semStats.average * semStats.totalCredits which is essentially the sum we just calculated
+                // But let's recalculate simply iterating all subjects
+                sem.subjects.forEach(sub => {
+                    const stats = calculateSubjectStats(sub);
+                    const credits = parseFloat(sub.credits || 3);
+                    if (stats.totalWeight > 0) {
+                        weightedSum += stats.projectedAvg * credits;
+                        totalCredits += credits;
+                    }
+                });
+            });
+
+            const global = totalCredits > 0 ? (weightedSum / totalCredits).toFixed(2) : "0.00";
+            document.getElementById('global-gpa').innerText = global;
+        }
+
+        function addSubjectPrompt() {
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            if (!currentSem) return alert("Selecciona o crea un semestre primero.");
+
+            const name = prompt("Nombre de la materia:");
+            if (name) {
+                const creds = prompt("Créditos (ej: 3):", "3");
+                currentSem.subjects.push({
+                    id: 'sub_' + Date.now(),
+                    name: name,
+                    credits: parseInt(creds) || 3,
+                    grades: []
+                });
+                saveGPA();
+                renderGPA();
+                showToast("Materia creada");
+            }
+        }
+
+        function editSubject(id, event) {
+            if (event) event.stopPropagation();
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            const sub = currentSem ? currentSem.subjects.find(s => s.id === id) : null;
+            if (!sub) return;
+
+            const newName = prompt("Editar nombre de la materia:", sub.name);
+            if (newName !== null) {
+                const newCreds = prompt("Editar créditos:", sub.credits);
+                if (newCreds !== null) {
+                    sub.name = newName || sub.name;
+                    sub.credits = parseInt(newCreds) || sub.credits;
+                    saveGPA();
+                    renderGPA();
+                }
+            }
+        }
+
+        function deleteSubject(id, event) {
+            if (event) event.stopPropagation();
+            if (confirm("¿Eliminar esta materia y todas sus notas?")) {
+                const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+                if (currentSem) {
+                    currentSem.subjects = currentSem.subjects.filter(s => s.id !== id);
+                    saveGPA();
+                    renderGPA();
+                    showToast("Materia eliminada");
+                }
+            }
+        }
+
+        // --- SUBJECT DETAIL ---
+        let currentSubjectId = null;
+
+        function openSubjectDetail(id) {
+            currentSubjectId = id;
+            // Search in current sem
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            const sub = currentSem ? currentSem.subjects.find(s => s.id === id) : null;
+
+            if (!sub) return;
+
+            document.getElementById('gpa-main-view').style.display = 'none';
+            document.getElementById('gpa-detail-view').style.display = 'flex';
+
+            renderSubjectDetail();
+        }
+
+        function closeSubjectDetail() {
+            currentSubjectId = null;
+            document.getElementById('gpa-detail-view').style.display = 'none';
+            document.getElementById('gpa-main-view').style.display = 'block';
+            renderGPA();
+        }
+
+        function renderSubjectDetail() {
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            const sub = currentSem ? currentSem.subjects.find(s => s.id === currentSubjectId) : null;
+            if (!sub) return;
+
+            const stats = calculateSubjectStats(sub);
+
+            document.getElementById('detail-name').innerText = sub.name;
+            // Show accumulated
+            document.getElementById('detail-accum').innerText = isNaN(stats.average) ? 'NA' : stats.average.toFixed(2);
+            document.getElementById('detail-progress').innerText = `${stats.totalWeight}%`;
+
+            const list = document.getElementById('grades-list');
+            list.innerHTML = '';
+
+            if (sub.grades.length === 0) {
+                list.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No hay notas registradas.</div>`;
+            } else {
+                sub.grades.forEach(g => {
+                    const item = document.createElement('div');
+                    item.className = 'card';
+                    item.style.padding = '1rem';
+                    item.style.display = 'flex';
+                    item.style.justifyContent = 'space-between';
+                    item.style.alignItems = 'center';
+                    item.style.borderLeft = `4px solid ${g.value >= 3.0 ? '#10b981' : '#ef4444'}`;
+
+                    item.innerHTML = `
+                        <div style="display: flex; gap: 2rem; align-items: center;">
+                            <div>
+                                <small style="display: block; color: var(--text-muted);">Nota</small>
+                                <span style="font-size: 1.2rem; font-weight: 700;">${g.value}</span>
+                            </div>
+                            <div>
+                                <small style="display: block; color: var(--text-muted);">Peso</small>
+                                <span style="font-size: 1.1rem;">${g.weight}%</span>
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteGrade('${g.id}')"><i class="ri-close-line"></i></button>
+                    `;
+                    list.appendChild(item);
+                });
+            }
+        }
+
+        function addGradeFromInput() {
+            const valInput = document.getElementById('new-grade-val');
+            const weightInput = document.getElementById('new-grade-weight');
+
+            const val = parseFloat(valInput.value);
+            const weight = parseFloat(weightInput.value);
+
+            if (isNaN(val) || isNaN(weight) || val < 0 || val > 5 || weight <= 0) {
+                return showToast("Datos inválidos (Nota 0-5, Peso > 0)", "error");
+            }
+
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            const sub = currentSem ? currentSem.subjects.find(s => s.id === currentSubjectId) : null;
+
+            // Check total weight
+            const currentWeight = sub.grades.reduce((acc, g) => acc + g.weight, 0);
+            if (currentWeight + weight > 100) {
+                return showToast(`El peso total no puede exceder 100% (Actual: ${currentWeight}%)`, "error");
+            }
+
+            sub.grades.push({
+                id: Date.now().toString(),
+                value: val,
+                weight: weight
+            });
+
+            valInput.value = '';
+            weightInput.value = '';
+            saveGPA();
+            renderSubjectDetail();
+            showToast("Nota agregada");
+        }
+
+        function deleteGrade(gradeId) {
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            const sub = currentSem ? currentSem.subjects.find(s => s.id === currentSubjectId) : null;
+
+            sub.grades = sub.grades.filter(g => g.id !== gradeId);
+            saveGPA();
+            renderSubjectDetail();
+            showToast("Nota eliminada");
+        }
+
+        function calcRequirementPrompt() {
+            const currentSem = gpaData.semesters.find(s => s.id === gpaData.selectedSemesterId);
+            const sub = currentSem ? currentSem.subjects.find(s => s.id === currentSubjectId) : null;
+            const stats = calculateSubjectStats(sub);
+
+            const remainingWeight = 100 - stats.totalWeight;
+
+            if (remainingWeight <= 0) {
+                if (stats.average >= 3.0) return alert(`¡Ya has completado el 100%! Tu definitiva es ${stats.average.toFixed(2)}. ¡Aprobaste!`);
+                else return alert(`Ya has completado el 100%. Tu definitiva es ${stats.average.toFixed(2)}. No aprobaste.`);
+            }
+
+            const target = 3.0;
+            const needed = (target - stats.totalPoints) / (remainingWeight / 100);
+
+            if (needed > 5.0) {
+                alert(`Necesitas ${needed.toFixed(2)} en el ${remainingWeight}% restante.\n\nEs matemáticamente imposible aprobar con 3.0 (Máximo posible: 5.0).`);
+            } else if (needed < 0) {
+                alert(`¡Ya has acumulado suficientes puntos! Incluso con 0.0 en el resto, tu definitiva sería superior a 3.0.`);
+            } else {
+                alert(`Para aprobar con 3.0:\n\nNecesitas un promedio de **${needed.toFixed(2)}** en el ${remainingWeight}% restante.`);
+            }
+        }
+
+        // --- ECON GRAPHS LOGIC ---
+        const econCategories = [
+            { id: 'math', title: 'Mathematical Concepts', count: '120+ gráficos', content: "Elasticidad, Cálculo Multivariable, Optimización..." },
+            { id: 'scarcity', title: 'Scarcity and Choice', count: '44 gráficos', content: "Frontera de posibilidades, autarquía..." },
+            { id: 'supply', title: 'Supply and Demand', count: '36 gráficos', content: "Oferta, demanda, mercado, impuestos..." },
+            { id: 'consumer', title: 'Consumer Theory', count: '96 gráficos', content: "Preferencias, presupuesto, utilidad..." },
+            { id: 'firm', title: 'Firm Theory', count: '50 gráficos', content: "Costos, producción, beneficios..." },
+            { id: 'power', title: 'Market Power', count: '18 gráficos', content: "Monopolio, oligopolio, antitrust..." },
+            { id: 'finance', title: 'Finance', count: '31 gráficos', content: "Interés, riesgo, CAPM..." },
+            { id: 'game', title: 'Game Theory', count: '9 gráficos', content: "Nash, información asimétrica..." },
+            { id: 'exchange', title: 'Exchange', count: '44 gráficos', content: "Edgeworth, bienestar..." },
+            { id: 'growth', title: 'Economic Growth', count: '4 gráficos', content: "Solow, modelos exógenos..." },
+            { id: 'macro', title: 'Short-Run Fluctuations', count: '3 gráficos', content: "IS-LM, ciclos económicos..." }
+        ];
+
+        // Detailed Topics for Math Concepts
+        const mathTopics = [
+            { type: 'header', title: 'Elasticity - Graphs' },
+            { type: 'topic', title: 'Calculating Elasticity (Midpoint)', id: 'elas-midpoint' },
+            { type: 'topic', title: 'Linear Demand Curve', id: 'elas-linear' },
+            { type: 'header', title: 'Elasticity - Explanations' },
+            { type: 'topic', title: 'Definition of Elasticity', id: 'elas-def' },
+
+            { type: 'header', title: 'Multivariable Calculus - Graphs' },
+            { type: 'topic', title: 'Plotting Multivariable Functions', id: 'multi-plot' },
+            { type: 'topic', title: 'Contour Maps', id: 'multi-contour' },
+            { type: 'header', title: 'Multivariable - Explanations' },
+            { type: 'topic', title: 'Partial Derivatives', id: 'multi-partial' },
+
+            { type: 'header', title: 'Optimization - Graphs' },
+            { type: 'topic', title: 'Univariate Max/Min', id: 'opt-uni' },
+            { type: 'topic', title: 'Constrained Optimization (Lagrange)', id: 'opt-lagrange' }
+        ];
+
+        function renderEconGrid() {
+            const grid = document.getElementById('econ-grid');
+            grid.innerHTML = '';
+            grid.className = 'hero-grid'; // Reuse grid style
+            grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(250px, 1fr))';
+            grid.style.gap = '1.5rem';
+
+            econCategories.forEach(cat => {
+                const el = document.createElement('div');
+                el.className = 'card';
+                el.style.cursor = 'pointer';
+                el.style.transition = 'transform 0.2s';
+                el.onmouseover = () => el.style.transform = 'translateY(-5px)';
+                el.onmouseout = () => el.style.transform = 'translateY(0)';
+                el.onclick = () => openEconCategory(cat);
+                el.innerHTML = `
+                    <h3 style="color: var(--primary); margin-bottom: 0.5rem;">${cat.title}</h3>
+                    <p style="font-size: 0.9rem; color: var(--text-muted);">${cat.content}</p>
+                    <div style="margin-top: 1rem; font-size: 0.8rem; background: var(--border); padding: 4px 8px; border-radius: 8px; width: fit-content;">
+                        <i class="ri-bar-chart-line"></i> ${cat.count}
+                    </div>
+                `;
+                grid.appendChild(el);
+            });
+        }
+
+        function openEconCategory(cat) {
+            document.getElementById('econ-main-view').style.display = 'none';
+            const detailView = document.getElementById('econ-detail-view');
+            detailView.style.display = 'flex';
+
+            document.getElementById('econ-cat-title').innerText = cat.title;
+            const list = document.getElementById('econ-topic-list');
+            list.innerHTML = '';
+
+            // Mock Topics based on category
+            const topics = [
+                { name: 'Introducción', id: 'intro' },
+                { name: 'Gráfico Interactivo', id: 'graph' },
+                { name: 'Conceptos Clave', id: 'concepts' }
+            ];
+
+            if (cat.id === 'supply') {
+                topics.push({ name: 'Curvas de Oferta y Demanda', id: 'sd-curves' });
+            }
+
+            topics.forEach(t => {
+                const li = document.createElement('li');
+                const btn = document.createElement('button');
+                btn.className = 'nav-btn';
+                btn.style.width = '100%';
+                btn.innerText = t.name;
+                btn.onclick = () => loadEconTopic(cat, t);
+                li.appendChild(btn);
+                list.appendChild(li);
+            });
+
+            // Load first topic
+            loadEconTopic(cat, topics[0]);
+        }
+
+        function closeEconDetail() {
+            document.getElementById('econ-detail-view').style.display = 'none';
+            document.getElementById('econ-main-view').style.display = 'block';
+        }
+
+        function loadEconTopic(cat, topic) {
+            document.getElementById('econ-topic-title').innerText = `${cat.title}: ${topic.name}`;
+            const canvas = document.getElementById('econ-canvas');
+            const ctx = canvas.getContext('2d');
+            const explanation = document.getElementById('econ-explanation');
+
+            // Reset Canvas
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Mock Content
+            if (cat.id === 'supply' && topic.id === 'sd-curves') {
+                explanation.innerHTML = `
+                    <p>Las curvas de oferta y demanda determinan el precio de equilibrio.</p>
+                    <ul>
+                        <li><strong>Demanda:</strong> Relación inversa entre precio y cantidad.</li>
+                        <li><strong>Oferta:</strong> Relación directa entre precio y cantidad.</li>
+                    </ul>
+                `;
+                drawSupplyDemand(ctx, canvas.width, canvas.height);
+            } else {
+                explanation.innerHTML = `<p>Explicación teórica sobre <strong>${topic.name}</strong> para la categoría ${cat.title}.</p>`;
+                ctx.font = "20px Outfit";
+                ctx.fillStyle = "#6366f1";
+                ctx.fillText("Selecciona 'Curvas de Oferta y Demanda' en Supply & Demand para demo interactiva.", 20, 50);
+            }
+        }
+
+        function drawSupplyDemand(ctx, w, h) {
+            // Simple static drawing for prototype
+            const padding = 50;
+            const chartW = w - padding * 2;
+            const chartH = h - padding * 2;
+
+            // Axes
+            ctx.beginPath();
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.moveTo(padding, h - padding);
+            ctx.lineTo(w - padding, h - padding); // X
+            ctx.moveTo(padding, h - padding);
+            ctx.lineTo(padding, padding); // Y
+            ctx.stroke();
+
+            // Labels
+            ctx.fillStyle = '#333';
+            ctx.font = '16px sans-serif';
+            ctx.fillText("Q", w - padding + 10, h - padding);
+            ctx.fillText("P", padding - 20, padding);
+
+            // Demand (Downwards)
+            ctx.beginPath();
+            ctx.strokeStyle = '#ef4444'; // Red
+            ctx.lineWidth = 3;
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(w - padding, h - padding);
+            ctx.stroke();
+            ctx.fillStyle = '#ef4444';
+            ctx.fillText("D", w - padding, h - padding - 10);
+
+            // Supply (Upwards)
+            ctx.beginPath();
+            ctx.strokeStyle = '#10b981'; // Green
+            ctx.moveTo(padding, h - padding);
+            ctx.lineTo(w - padding, padding);
+            ctx.stroke();
+            ctx.fillStyle = '#10b981';
+            ctx.fillText("S", w - padding, padding + 20);
+        }
+
+        // --- ENHANCED CURSOR ---
+        document.querySelectorAll('button, input, textarea, a').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorOutline.style.width = '60px';
+                cursorOutline.style.height = '60px';
+                cursorOutline.style.background = 'rgba(99, 102, 241, 0.1)';
+                cursorOutline.style.borderColor = 'var(--primary)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursorOutline.style.width = '40px';
+                cursorOutline.style.height = '40px';
+                cursorOutline.style.background = 'transparent';
+                cursorOutline.style.borderColor = 'var(--secondary)';
+            });
+        });
+
+        // --- ECON GRAPHS V2 LOGIC ---
+        let chartState = { price: 50, p1: 80, p2: 20 };
+
+        // Override the open function to point to V2 logic
+        window.openEconCategory = function (cat) {
+            document.getElementById('econ-main-view').style.display = 'none';
+            const detailView = document.getElementById('econ-detail-view');
+            detailView.style.display = 'flex';
+
+            document.getElementById('econ-cat-title').innerText = cat.title;
+            const list = document.getElementById('econ-topic-list');
+            list.innerHTML = '';
+
+            // Detailed Topics for Math Concepts
+            const mathTopics = [
+                { type: 'header', title: 'Elasticity - Graphs' },
+                { type: 'topic', title: 'Calculando Elasticidad (Punto Medio)', id: 'elas-midpoint' },
+                { type: 'topic', title: 'Curva de Demanda Lineal', id: 'elas-linear' },
+
+                { type: 'header', title: 'Cálculo Multivariable - Gráficos' },
+                { type: 'topic', title: 'Graficando Funciones Multivariables', id: 'multi-plot' },
+                { type: 'topic', title: 'Mapas de Contorno (Level Sets)', id: 'multi-contour' },
+
+                { type: 'header', title: 'Optimización - Gráficos' },
+                { type: 'topic', title: 'Máximos y Mínimos Univariados', id: 'opt-uni' }
+            ];
+
+            let currentTopics = [];
+            // Check if it is the new Math category or legacy
+            if (cat.id === 'math') {
+                currentTopics = mathTopics;
+            } else {
+                currentTopics = [
+                    { type: 'topic', title: 'Introducción', id: 'intro' }
+                ];
+                if (cat.id === 'supply') {
+                    currentTopics.push({ type: 'topic', title: 'Curvas de Oferta y Demanda', id: 'sd-curves' });
+                }
+            }
+
+            currentTopics.forEach(t => {
+                const li = document.createElement('li');
+                if (t.type === 'header') {
+                    li.innerHTML = `<h4 style="margin: 1rem 0 0.5rem 0; font-size: 0.85rem; text-transform: uppercase; color: var(--text-muted); letter-spacing: 1px;">${t.title}</h4>`;
+                    li.style.listStyle = 'none';
+                } else {
+                    const btn = document.createElement('button');
+                    btn.className = 'nav-btn';
+                    btn.style.width = '100%';
+                    btn.style.textAlign = 'left';
+                    btn.style.padding = '0.5rem';
+                    btn.style.fontSize = '0.9rem';
+                    btn.innerText = (t.title || t.name);
+                    btn.onclick = () => loadEconTopicV2(cat, t);
+                    li.appendChild(btn);
+                }
+                list.appendChild(li);
+            });
+
+            const firstTopic = currentTopics.find(t => t.type === 'topic');
+            if (firstTopic) loadEconTopicV2(cat, firstTopic);
+        };
+
+        window.updateChartState = (key, val) => {
+            chartState[key] = parseFloat(val);
+            const topicTitle = document.getElementById('econ-topic-title').innerText;
+            if (topicTitle.includes('Lineal')) drawLinearElasticity();
+            if (topicTitle.includes('Elasticidad')) drawMidpointElasticity();
+            if (topicTitle.includes('Multivariables')) update3DMesh();
+            if (topicTitle.includes('Contorno')) drawContourMap();
+            if (topicTitle.includes('Máximos')) drawOptimizationUni();
+        };
+
+        function loadEconTopicV2(cat, topic) {
+            cleanupThree(); // Clean previous 3D
+
+            document.getElementById('econ-topic-title').innerText = topic.title || topic.name;
+            const canvas = document.getElementById('econ-canvas');
+            const explanation = document.getElementById('econ-explanation');
+            const controls = document.getElementById('econ-controls');
+
+            controls.innerHTML = '';
+            controls.style.display = 'none';
+            explanation.innerHTML = '';
+
+            // Clear 2D Canvas
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            if (topic.id === 'elas-linear') {
+                explanation.innerHTML = `
+                    <p>La elasticidad precio de la demanda varía a lo largo de una curva de demanda lineal.</p>
+                    <p>Mueve el precio <strong>P</strong> para ver cómo cambia la elasticidad.</p>
+                `;
+                controls.style.display = 'block';
+                controls.innerHTML = `
+                    <label>Precio (P): <input type="range" min="10" max="90" value="50" oninput="updateChartState('price', this.value)"></label>
+                `;
+                chartState.price = 50;
+                drawLinearElasticity();
+            } else if (topic.id === 'elas-midpoint') {
+                explanation.innerHTML = `<p>Cálculo de elasticidad arco entre dos puntos.</p>`;
+                controls.style.display = 'block';
+                controls.innerHTML = `
+                    <label>P1: <input type="range" min="60" max="90" value="80" oninput="updateChartState('p1', this.value)"></label>
+                    <br>
+                    <label>P2: <input type="range" min="10" max="40" value="20" oninput="updateChartState('p2', this.value)"></label>
+                `;
+                chartState.p1 = 80;
+                chartState.p2 = 20;
+                drawMidpointElasticity();
+            } else if (topic.id === 'multi-plot') {
+                explanation.innerHTML = `<p>Visualización de una función Cobb-Douglas: z = x^a * y^(1-a).</p>`;
+                controls.style.display = 'block';
+                controls.innerHTML = `
+                    <label>Exponente a (0-1): <input type="range" min="0" max="100" value="50" oninput="updateChartState('alpha', this.value/100)"></label>
+                `;
+                chartState.alpha = 0.5;
+                drawMultivariable3D();
+            } else if (topic.id === 'multi-contour') {
+                explanation.innerHTML = `<p>Los mapas de contorno muestran curvas de nivel donde z es constante para z = x^a * y^(1-a).</p>`;
+                controls.style.display = 'block';
+                controls.innerHTML = `
+                   <label>Exponente a: <input type="range" min="0" max="100" value="50" oninput="updateChartState('alpha', this.value/100)"></label>
+                `;
+                chartState.alpha = 0.5;
+                chartState.level = 0; // Not used yet interaction wise
+                drawContourMap();
+            } else if (topic.id === 'opt-uni') {
+                explanation.innerHTML = `<p>En el máximo de una función suave, la derivada es cero (f'(x) = 0). Mueve x para encontrar la cima.</p>`;
+                controls.style.display = 'block';
+                controls.innerHTML = `
+                   <label>Posición x: <input type="range" min="0" max="100" value="20" oninput="updateChartState('xval', this.value)"></label>
+                `;
+                chartState.xval = 20;
+                drawOptimizationUni();
+            } else if (topic.id === 'sd-curves') {
+                explanation.innerHTML = `<p>Gráfico de Oferta y Demanda.</p>`;
+                drawSupplyDemand(ctx, canvas.width, canvas.height);
+            } else {
+                explanation.innerHTML = `<p>${topic.title}</p><p class='text-muted'>Gráfico interactivo en desarrollo.</p>`;
+                ctx.fillStyle = '#666';
+                ctx.font = "20px sans-serif";
+                ctx.fillText("Próximamente", 50, 50);
+            }
+        }
+
+        function drawMultivariable3D() {
+            // Hide 2D canvas
+            document.getElementById('econ-canvas').style.display = 'none';
+            const container = document.getElementById('econ-canvas-container');
+
+            // Init Three.js
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+
+            threeScene = new THREE.Scene();
+            threeScene.background = new THREE.Color(0xffffff);
+
+            threeCamera = new THREE.PerspectiveCamera(50, w / h, 0.1, 1000);
+            threeCamera.position.set(5, 5, 5);
+            threeCamera.lookAt(0, 0, 0);
+
+            threeRenderer = new THREE.WebGLRenderer({ antialias: true });
+            threeRenderer.setSize(w, h);
+            container.insertBefore(threeRenderer.domElement, container.firstChild);
+
+            const controls = new THREE.OrbitControls(threeCamera, threeRenderer.domElement);
+
+            // Grid / Axes
+            const gridHelper = new THREE.GridHelper(10, 10);
+            threeScene.add(gridHelper);
+            const axesHelper = new THREE.AxesHelper(5);
+            threeScene.add(axesHelper);
+
+            // Initial Plot
+            update3DMesh();
+
+            function animate() {
+                threeReqId = requestAnimationFrame(animate);
+                controls.update();
+                threeRenderer.render(threeScene, threeCamera);
+            }
+            animate();
+        }
+
+        function update3DMesh() {
+            if (threeMesh) threeScene.remove(threeMesh);
+
+            // Function z = x^a * y^(1-a)
+            // We plot on [0, 4] x [0, 4]
+            const geometry = new THREE.PlaneGeometry(4, 4, 30, 30);
+            const alpha = chartState.alpha;
+
+            const count = geometry.attributes.position.count;
+            for (let i = 0; i < count; i++) {
+                const x = geometry.attributes.position.getX(i) + 2; // Shift to positive quadrant
+                const y = geometry.attributes.position.getY(i) + 2;
+                // PlaneGeometry is centered at 0,0. Range is -2 to 2 initially. +2 makes it 0 to 4.
+                // Actually PlaneGeometry is X-Y plane. Z is up.
+                // Let's map U,V.
+                // PlaneGeometry coords: x, y, z=0.
+
+                // Let's assume geometry x,y are inputs.
+                // Z is value.
+                // x goes from -2 to 2. y goes from -2 to 2.
+                const trueX = x; // 0 to 4
+                // geometry.y corresponds to our 'y' input but let's correct rotation.
+                // Usually Plane is XY. We want XZ or just rotate mesh.
+                // Let's keep mesh flat and displace Z.
+                const trueY = -1 * (geometry.attributes.position.getY(i)) + 2; // 0 to 4
+
+                let val = 0;
+                if (trueX > 0 && trueY > 0) {
+                    val = Math.pow(trueX, alpha) * Math.pow(trueY, 1 - alpha);
+                }
+
+                geometry.attributes.position.setZ(i, val);
+            }
+
+            geometry.computeVertexNormals();
+
+            const material = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+            // Or nice color
+            const material2 = new THREE.MeshPhongMaterial({
+                color: 0x6366f1,
+                side: THREE.DoubleSide,
+                shininess: 50,
+                flatShading: false
+            });
+
+            // Light
+            const light = new THREE.PointLight(0xffffff, 1, 100);
+            light.position.set(5, 5, 5);
+            threeScene.add(light);
+            const ambient = new THREE.AmbientLight(0x404040);
+            threeScene.add(ambient);
+
+            threeMesh = new THREE.Mesh(geometry, material2);
+            threeMesh.rotation.x = -Math.PI / 2; // Rotate to lie on grid
+            threeMesh.position.set(0, 0, 0); // Center
+            // Centering correction: geometry is -2 to +2.
+            // We computed Z based on 0..4 coords.
+            // We need to shift mesh so 0,0 is at grid origin?
+            // Current grid is center 0.
+            // Let's just let it float.
+
+            threeScene.add(threeMesh);
+        }
+
+        function drawLinearElasticity() {
+            const canvas = document.getElementById('econ-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height; const padding = 60;
+            const maxQ = 100; const maxP = 100;
+
+            const P = chartState.price;
+            const Q = 100 - P;
+            const E = Math.abs(-1 * (P / Q)).toFixed(2);
+
+            ctx.clearRect(0, 0, w, h);
+            drawAxes(ctx, w, h, padding, "Q", "P");
+
+            const mapX = (q) => padding + (q / maxQ) * (w - 2 * padding);
+            const mapY = (p) => (h - padding) - (p / maxP) * (h - 2 * padding);
+
+            // Curve
+            ctx.beginPath();
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.moveTo(mapX(0), mapY(100));
+            ctx.lineTo(mapX(100), mapY(0));
+            ctx.stroke();
+
+            // Point
+            const px = mapX(Q); const py = mapY(P);
+
+            // Dotted lines
+            ctx.setLineDash([4, 6]);
+            ctx.strokeStyle = 'rgba(99, 102, 241, 0.4)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(px, py); ctx.lineTo(px, h - padding);
+            ctx.moveTo(px, py); ctx.lineTo(padding, py);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Point Outer Ring
+            ctx.beginPath();
+            ctx.fillStyle = '#fff';
+            ctx.arc(px, py, 8, 0, Math.PI * 2);
+            ctx.fill();
+            // Point Inner Circle
+            ctx.beginPath();
+            ctx.fillStyle = '#ef4444';
+            ctx.arc(px, py, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Labels
+            ctx.fillStyle = '#333'; ctx.font = '14px Inter, sans-serif';
+            ctx.fillText(`P=${P}`, 10, py + 5);
+            ctx.textAlign = 'center';
+            ctx.fillText(`Q=${Q}`, px, h - padding + 25);
+
+            // Result
+            ctx.textAlign = 'right';
+            ctx.font = 'bold 18px Inter, sans-serif';
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(`Elasticidad |E| = ${E}`, w - 20, 40);
+
+            let label = "Unitaria";
+            ctx.font = '14px Inter, sans-serif';
+            ctx.fillStyle = '#64748b';
+            if (E > 1) label = "Elástica"; if (E < 1) label = "Inelástica";
+            ctx.fillText(label, w - 20, 65);
+        }
+
+        function drawMidpointElasticity() {
+            const canvas = document.getElementById('econ-canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height; const padding = 60;
+            const maxP = 100; const maxQ = 100;
+
+            const P1 = chartState.p1; const P2 = chartState.p2;
+            const Q1 = 100 - P1; const Q2 = 100 - P2;
+
+            ctx.clearRect(0, 0, w, h);
+            drawAxes(ctx, w, h, padding, "Q", "P");
+            const mapX = (q) => padding + (q / maxQ) * (w - 2 * padding);
+            const mapY = (p) => (h - padding) - (p / maxP) * (h - 2 * padding);
+
+            // Curve
+            ctx.beginPath();
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.moveTo(mapX(0), mapY(100));
+            ctx.lineTo(mapX(100), mapY(0));
+            ctx.stroke();
+
+            // Points
+            [{ p: P1, q: Q1, c: '#ef4444' }, { p: P2, q: Q2, c: '#10b981' }].forEach(pt => {
+                const px = mapX(pt.q); const py = mapY(pt.p);
+                // Dotted guide
+                ctx.setLineDash([4, 6]);
+                ctx.strokeStyle = 'rgba(0,0,0,0.1)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(px, py); ctx.lineTo(px, h - padding);
+                ctx.moveTo(px, py); ctx.lineTo(padding, py);
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Ring
+                ctx.beginPath(); ctx.fillStyle = '#fff'; ctx.arc(px, py, 8, 0, Math.PI * 2); ctx.fill();
+                // Circle
+                ctx.beginPath(); ctx.fillStyle = pt.c; ctx.arc(px, py, 5, 0, Math.PI * 2); ctx.fill();
+            });
+
+            const dQ = Q2 - Q1; const dP = P2 - P1;
+            const avgQ = (Q1 + Q2) / 2; const avgP = (P1 + P2) / 2;
+            const E = Math.abs((dQ / avgQ) / (dP / avgP)).toFixed(2);
+
+            ctx.textAlign = 'right';
+            ctx.font = 'bold 18px Inter, sans-serif';
+            ctx.fillStyle = '#1e293b';
+            ctx.fillText(`Elasticidad Arco = ${E}`, w - 20, 40);
+        }
+
+        function drawAxes(ctx, w, h, p, xLab, yLab) {
+            ctx.beginPath();
+            ctx.strokeStyle = '#cbd5e1';
+            ctx.lineWidth = 2;
+            // Y Axis
+            ctx.moveTo(p, h - p); ctx.lineTo(p, p);
+            // X Axis
+            ctx.moveTo(p, h - p); ctx.lineTo(w - p, h - p);
+            ctx.stroke();
+
+            // Arrows (Simplified)
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = 'bold 16px Inter, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText(xLab, w - p + 15, h - p + 5);
+            ctx.fillText(yLab, p - 20, p + 5);
+        }
+
+        function cleanupThree() {
+            if (typeof threeRenderer !== 'undefined' && threeRenderer) {
+                const container = document.getElementById('econ-canvas-container');
+                if (container && container.contains(threeRenderer.domElement)) {
+                    container.removeChild(threeRenderer.domElement);
+                }
+                threeRenderer.dispose();
+                threeRenderer = null;
+            }
+            if (typeof threeReqId !== 'undefined' && threeReqId) {
+                cancelAnimationFrame(threeReqId);
+                threeReqId = null;
+            }
+            const canvas = document.getElementById('econ-canvas');
+            if (canvas) canvas.style.display = 'block';
+        }
+
+        function drawContourMap() {
+            const canvas = document.getElementById('econ-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height;
+            const alpha = chartState.alpha || 0.5;
+
+            ctx.clearRect(0, 0, w, h);
+            drawAxes(ctx, w, h, 50, "x", "y");
+
+            const maxVal = 10;
+            const mapX = (x) => 50 + (x / maxVal) * (w - 100);
+            const mapY = (y) => (h - 50) - (y / maxVal) * (h - 100);
+
+            const levels = [1, 2, 3, 4, 5, 6];
+
+            // Clip region
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(50, 50, w - 100, h - 100);
+            ctx.clip();
+
+            levels.forEach(z => {
+                ctx.beginPath();
+                ctx.strokeStyle = '#6366f1';
+                ctx.lineWidth = 2;
+
+                let first = true;
+                // Scan x
+                for (let xPixel = 0; xPixel <= w - 100; xPixel += 2) {
+                    const x = (xPixel / (w - 100)) * maxVal;
+                    if (x <= 0.05) continue;
+
+                    let y = 0;
+                    // z = x^a * y^(1-a) => y = (z / x^a)^(1/(1-a))
+                    if (Math.abs(1 - alpha) < 0.01) continue;
+                    try {
+                        y = Math.pow(z / Math.pow(x, alpha), 1 / (1 - alpha));
+                    } catch (e) { continue; }
+
+                    const px = mapX(x);
+                    const py = mapY(y);
+
+                    if (y >= 0 && y <= maxVal * 2) { // Allow some overshoot
+                        if (first) { ctx.moveTo(px, py); first = false; }
+                        else { ctx.lineTo(px, py); }
+                    } else {
+                        first = true;
+                    }
+                }
+                ctx.stroke();
+
+                // Draw label at some point
+                const lx = maxVal / 2;
+                const ly = Math.pow(z / Math.pow(lx, alpha), 1 / (1 - alpha));
+                if (ly < maxVal && ly > 0) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = '12px Inter';
+                    ctx.fillText(`z=${z}`, mapX(lx), mapY(ly));
+                }
+            });
+            ctx.restore();
+
+            ctx.fillStyle = '#333';
+            ctx.font = '16px Inter';
+            ctx.fillText(`Mapa de Contornos (Cobb-Douglas a=${alpha.toFixed(2)})`, w / 2, 30);
+        }
+
+        function drawOptimizationUni() {
+            const canvas = document.getElementById('econ-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width; const h = canvas.height;
+            const xVal = chartState.xval || 20;
+
+            const domainMax = 10;
+            const f = (x) => -1 * Math.pow(x - 5, 2) + 25;
+            const df = (x) => -2 * (x - 5);
+
+            const currentX = (xVal / 100) * domainMax;
+            const currentY = f(currentX);
+            const slope = df(currentX);
+
+            ctx.clearRect(0, 0, w, h);
+            drawAxes(ctx, w, h, 50, "x", "f(x)");
+
+            const mapX = (x) => 50 + (x / domainMax) * (w - 100);
+            const mapY = (y) => (h - 50) - (y / 30) * (h - 100);
+
+            // Draw Curve
+            ctx.beginPath();
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 3;
+            for (let i = 0; i <= 100; i++) {
+                const x = (i / 100) * domainMax;
+                const y = f(x);
+                const px = mapX(x);
+                const py = mapY(y);
+                if (i === 0) ctx.moveTo(px, py);
+                else ctx.lineTo(px, py);
+            }
+            ctx.stroke();
+
+            const tangentLength = 1.5;
+            const x1 = currentX - tangentLength;
+            const x2 = currentX + tangentLength;
+            const y1 = slope * (x1 - currentX) + currentY;
+            const y2 = slope * (x2 - currentX) + currentY;
+
+            ctx.beginPath();
+            ctx.strokeStyle = '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.moveTo(mapX(x1), mapY(y1));
+            ctx.lineTo(mapX(x2), mapY(y2));
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.fillStyle = '#ef4444';
+            ctx.arc(mapX(currentX), mapY(currentY), 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#333';
+            ctx.font = '16px Inter';
+            ctx.textAlign = 'right';
+            ctx.fillText(`x: ${currentX.toFixed(2)}`, w - 60, 60);
+            ctx.fillText(`f(x): ${currentY.toFixed(2)}`, w - 60, 80);
+            ctx.fillText(`f'(x): ${slope.toFixed(2)}`, w - 60, 100);
+
+            if (Math.abs(slope) < 0.1) {
+                ctx.fillStyle = '#10b981';
+                ctx.textAlign = 'center';
+                ctx.fillText("¡Punto Máximo Local!", w / 2, 40);
+            }
+        }
+
+        // --- INICIALIZACIÓN ---
+        window.onload = () => {
+            init3D();
+            renderLib();
+            updateCustomGraph();
+
+            // Si hay hash, navegar
+            // Init GPA v3
+            initGPA();
+
+            // Calculo inicial de economía
+            renderEconGrid();
+        };
+
+    </script>
+</body>
+
+</html>

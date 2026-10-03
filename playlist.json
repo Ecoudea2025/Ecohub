@@ -1,0 +1,16 @@
+{
+  "playlists": [
+    {
+      "id": "focus",
+      "name": "Focus · Estudio",
+      "color": "#069a7e",
+      "tracks": []
+    },
+    {
+      "id": "relax",
+      "name": "Relax",
+      "color": "#5f4786",
+      "tracks": []
+    }
+  ]
+}

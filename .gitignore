@@ -1,0 +1,57 @@
+# Dependencias y artefactos de Frontend / Node
+node_modules/
+dist/
+build/
+.vite/
+*.local
+
+# Python y bases de datos locales
+__pycache__/
+*.py[cod]
+*$py.class
+*.venv
+venv/
+ENV/
+*.db
+*.sqlite
+data/*.sqlite
+data/backups/
+
+# Credenciales, secretos, tokens y cookies
+.env*
+*.key
+credentials.*
+secrets.*
+auth.json
+*.cookies.txt
+*_cookies.txt
+*.lock
+.chat.*
+
+# Entornos y datos temporales de agentes y pruebas
+.opencode-home/
+.playwright-mcp/
+
+# IDEs, editores y sistema operativo
+.vscode/
+.idea/
+*.log
+Thumbs.db
+Desktop.ini
+*.bak
+*.tmp
+*.swp
+
+# LaTeX - archivos temporales de compilación
+*.aux
+*.log
+*.out
+*.synctex*
+
+# Archivos multimedia pesados (>100MB / derechos de autor)
+media/*.mp3
+media/*.mp4
+!media/.gitkeep
+
+# Carpetas privadas y datos personales de autor
+Ude@/
