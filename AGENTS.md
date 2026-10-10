@@ -1,40 +1,47 @@
-# Ecohub — Guía para el agente de planificación (opencode)
+# INSTRUCCIONES PERMANENTES PARA AGENTES (Ecohub)
 
-> [!NOTE]
-> **IMPORTANTE — ÁMBITO DE ESTE ARCHIVO:**
-> Este archivo `AGENTS.md` es **exclusivamente** para el agente incorporado con `opencode` (el chatbot web para planificar agenda y eventos).
-> **NO es para agentes de desarrollo o codificación** (como Antigravity, Claude, etc.).
-> Para instrucciones, guías de desarrollo, arquitectura y QA para asistentes de desarrollo de software, consulta [`AGENTS_DEV.md`](./AGENTS_DEV.md).
+Estas reglas se aplican a todo agente de IA que contribuya al proyecto Ecohub. El objetivo es transformar Ecohub en una app Android "daily driver", estable y usable en celular.
 
-Hub personal de estudio de un estudiante de Economía de la Universidad de Antioquia.
-Se sirve vía IIS/PHP en `http://localhost/Ecohub`.
+## Reglas de trabajo
+- Trabaja SIEMPRE sobre la rama `main` (o crea ramas feature siguiendo el patrón `feat/nombre-tarea`).
+- Cada cambio debe ser **atómico**: una tarea = un PR. No mezcles features distintas.
+- Antes de modificar, lee TODO el archivo afectado y el `AGENTS.md`.
+- Si una tarea requiere cambios en múltiples archivos, lista primero los archivos que tocarás y espera confirmación si hay ambigüedad.
+- Ejecuta los tests existentes después de cada cambio. Si no hay tests, créalos para la funcionalidad que modifiques.
+- Documenta cada cambio en el PR con: qué se hizo, por qué, archivos tocados, cómo probarlo.
 
-## Flujo diario obligatorio
+## Reglas de UI/UX (obligatorias)
+- **Mobile-first**: TODO debe verse bien en pantallas de 5" a 7". Cero scroll horizontal, cero elementos cortados.
+- **Sin solapamientos**: usa `WindowInsets`, `Modifier.imePadding()`, `safeDrawingPadding()` donde aplique.
+- **Diseño consistente**: usa Material 3 (Compose) o el sistema de diseño existente. No mezcles estilos.
+- **Accesibilidad**: contraste mínimo 4.5:1, tamaños táctiles ≥ 48dp.
+- **Rendimiento**: evita recomposiciones innecesarias, usa `LazyColumn`/`LazyRow` para listas.
 
-1. **Al iniciar cada sesión, lee `plan/agenda.md`** (espejo legible de `plan/agenda.json`).
-2. Ofrece al usuario priorizar y refinar las tareas del día **antes de escribir código**.
-3. Pregunta si quiere avanzar en alguna tarea marcada de la agenda, o si hay un "Plan de proyecto" en curso.
+## CÓMO TRABAJAR CADA DÍA (protocolo diario)
+Cada vez que se te invoque, sigue este protocolo:
+1. Lee `AGENTS.md` y el estado actual del repo.
+2. Revisa si hay un PR abierto tuyo sin mergear. Si lo hay, espera.
+3. Elige UNA tarea de la fase actual (la primera pendiente en `ROADMAP.md`).
+4. Antes de codear: escribe en un comentario del PR el plan (qué archivos, qué cambios).
+5. Implementa, testea, y abre el PR.
+6. En el PR, incluye:
+   - Título: `[Fase X] Descripción breve`
+   - Cuerpo: qué, por qué, cómo probar, screenshots si aplica.
+   - Marca la tarea como completada en un `ROADMAP.md`.
 
-## Edición de la agenda
+## RESTRICCIONES
+- ❌ NO introduzcas dependencias nuevas sin justificarlo y sin verificar que sean estables y mantenidas.
+- ❌ NO uses APIs que requieran API keys (a menos que sea imprescindible y el usuario lo confirme).
+- ❌ NO hagas refactors masivos que rompan la app; cambios incrementales.
+- ❌ NO cambies el stack tecnológico sin consultar.
+- ✅ SIEMPRE prioriza que la app funcione en celular sobre cualquier otra cosa.
+- ✅ SIEMPRE documenta supuestos y limitaciones.
+- Si algo es ambiguo, PREGUNTA antes de asumir.
 
-- El usuario puede pedirte planificar: "tengo para el 27 de diciembre este trabajo...".
-- Si el usuario edita vía el chatbot de la web, los cambios llegan por `api/chat.php` con instrucciones restringidas; si te lo pide directamente en la sesión CLI, edita **solo** los archivos bajo `plan/` (nunca otros archivos sin pedir permiso).
-- Formato de `plan/agenda.json`:
-  - `events[]`: { id, title, date (YYYY-MM-DD), start (HH:MM o null), end, allDay, recurring (none|daily|weekly|monthly), category (color_key), notes, done }
-  - `tasks[]`: { id, title, date, category, priority (low|med|high), estMin, done }
-  - `goals`: array de objetivos semanales
-  - `changelog[]`: { ts, agent, text } — registra SIEMPRE un changelog entry al editar
-  - `version`: 1
-- Tras editar, regenera `plan/agenda.md` (versión markdown legible) y deja `plan/agenda.json` como JSON válido.
-- Regla de oro: **no satures el día** — máximo ~5 tareas grandes por día; reparte la carga entre días disponibles; respeta los eventos ya agendados.
-
-## Arquitectura rápida
-
-- Frontend vanilla (ES modules), GSAP 3.12 + anime.js 4.5, pdf.js, PHP bridge en `api/` (`sync.php` para leer/escribir `plan/`, `chat.php` y `keyword_parser.php` para el chatbot con parser determinista de palabras clave y fechas).
-- El chatbot web funciona en modo 100% autónomo por defecto, **tanto por IIS (`http://localhost/Ecohub`) como por `iniciar.bat`**.
-- Secciones: #/inicio #/pdf #/udea #/herramientas #/agenda #/musica #/enlaces #/laboratorios.
-
-## QA
-
-- PHP: `php -l api/*.php`. JS: `Get-Content js\*.js -Raw | node --input-type=module --check`.
-- Sin placeholders, sin APIs inventadas, sin errores de consola.
+## CHECKLIST RÁPIDO (verificar antes de cerrar PR)
+- [ ] La app compila sin errores.
+- [ ] Los tests pasan.
+- [ ] No hay solapamientos en móvil (5").
+- [ ] No hay scroll horizontal.
+- [ ] La funcionalidad nueva es usable en 3 taps o menos.
+- [ ] Documentación actualizada (si aplica).
