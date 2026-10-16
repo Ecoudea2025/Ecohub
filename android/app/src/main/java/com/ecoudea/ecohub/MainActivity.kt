@@ -1,0 +1,239 @@
+package com.ecoudea.ecohub
+
+import android.os.Build
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Public
+import com.ecoudea.ecohub.CalculatorScreen
+import com.ecoudea.ecohub.DashboardScreen
+import com.ecoudea.ecohub.GradesScreen
+import com.ecoudea.ecohub.AgendaScreen
+import com.ecoudea.ecohub.PdfReaderScreen
+import com.ecoudea.ecohub.MusicPlayerScreen
+import com.ecoudea.ecohub.BoardScreen
+import com.ecoudea.ecohub.LinksScreen
+import com.ecoudea.ecohub.AcademicScreen
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+
+class MainActivity : ComponentActivity() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
+        setContent {
+            EcohubTheme {
+                val navController = rememberNavController()
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentRoute = navBackStackEntry?.destination?.route
+
+                Scaffold(
+                    modifier = Modifier.fillMaxSize(),
+                    bottomBar = {
+                        NavigationBar {
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Home, contentDescription = "Dashboard") },
+                                label = { Text("Inicio") },
+                                selected = currentRoute == "dashboard",
+                                onClick = {
+                                    navController.navigate("dashboard") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Info, contentDescription = "Académico") },
+                                label = { Text("Académico") },
+                                selected = currentRoute == "academic",
+                                onClick = {
+                                    navController.navigate("academic") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Build, contentDescription = "Calculadora") },
+                                label = { Text("Calc") },
+                                selected = currentRoute == "calculator",
+                                onClick = {
+                                    navController.navigate("calculator") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Public, contentDescription = "Enlaces") },
+                                label = { Text("Enlaces") },
+                                selected = currentRoute == "links",
+                                onClick = {
+                                    navController.navigate("links") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Edit, contentDescription = "Tablero") },
+                                label = { Text("Tablero") },
+                                selected = currentRoute == "board",
+                                onClick = {
+                                    navController.navigate("board") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.PlayArrow, contentDescription = "Música") },
+                                label = { Text("Música") },
+                                selected = currentRoute == "music",
+                                onClick = {
+                                    navController.navigate("music") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.Info, contentDescription = "PDF") },
+                                label = { Text("PDF") },
+                                selected = currentRoute == "pdf",
+                                onClick = {
+                                    navController.navigate("pdf") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.List, contentDescription = "Agenda") },
+                                label = { Text("Agenda") },
+                                selected = currentRoute == "agenda",
+                                onClick = {
+                                    navController.navigate("agenda") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                            NavigationBarItem(
+                                icon = { Icon(Icons.Default.List, contentDescription = "Promedios") },
+                                label = { Text("Promedios") },
+                                selected = currentRoute == "grades",
+                                onClick = {
+                                    navController.navigate("grades") {
+                                        popUpTo(navController.graph.findStartDestination().id) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                }
+                            )
+                        }
+                    }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "dashboard",
+                        modifier = Modifier.padding(innerPadding)
+                    ) {
+                        composable("dashboard") {
+                            DashboardScreen()
+                        }
+                        composable("calculator") {
+                            CalculatorScreen()
+                        }
+                        composable("grades") {
+                            GradesScreen()
+                        }
+                        composable("agenda") {
+                            AgendaScreen()
+                        }
+                        composable("pdf") {
+                            PdfReaderScreen()
+                        }
+                        composable("music") {
+                            MusicPlayerScreen()
+                        }
+                        composable("board") {
+                            BoardScreen()
+                        }
+                        composable("links") {
+                            LinksScreen()
+                        }
+                        composable("academic") {
+                            AcademicScreen()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun EcohubTheme(
+    darkTheme: Boolean = androidx.compose.foundation.isSystemInDarkTheme(),
+    dynamicColor: Boolean = true,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> androidx.compose.material3.darkColorScheme()
+        else -> androidx.compose.material3.lightColorScheme()
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        content = content
+    )
+}
